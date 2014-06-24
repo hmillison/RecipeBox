@@ -1,0 +1,4 @@
+ // .bowerrc
+{
+	"directory": "public/libs"
+}

@@ -1,0 +1,13 @@
+{
+  "name"         : "recipe-box",
+  "version"      : "0.0.1",
+  "description"  : "Scrapes the web to construct a simple recipe manager",
+  "main"         : "server.js",
+  "author"       : "henry",
+  "dependencies" : {
+    	"express"    : "~3.4.4",
+    	"request"    : "latest",
+    	"cheerio"    : "latest",
+    	"mongoose"   : "~3.6.2"
+  }
+  }
