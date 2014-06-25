@@ -25,7 +25,7 @@ app.use(bodyParser());
      app.use(express.static(__dirname + '../public'));
  
 		
-       // require('./config/passport')(passport); // pass passport for configuration
+       require('./config/passport')(passport); // pass passport for configuration
 
 		// set up our express application
 		app.use(morgan('dev')); // log every request to the console
@@ -40,13 +40,25 @@ app.use(bodyParser());
 
 	require('./app/routes.js')(app, passport); // load our routes and pass in our app and fully configured passport
 
+// define model =================
+var recipe = mongoose.model('recipe', {
+		text : String
+});
+
+
+
+
+
 var posturl = ""
 // This route receives the posted form.
 // As explained above, usage of 'body-parser' means
 // that `req.body` will be filled in with the form elements
 app.post('/', function(req, res){
-	 posturl = req.body.url;
+  posturl = req.body.url;
+ 
   res.redirect('/scrape');
+  	 var loading = "<i class='icon-spinner icon-spin icon-large'></i>";
+   res.render('index.ejs',{recipes: loading}); // load the index.ejs file
 
 });
 
@@ -55,10 +67,21 @@ app.post('/', function(req, res){
 app.get('/scrape', function(req, res){
 
 	url = posturl;
-
- 	console.log(url);
+	//Appends http:// to urls to ensure proper scraping
+	if(url.substr(0,3) == "www")
+	{
+		url = "http://" + url
+	}
+	
+	
 	request(url, function(error, response, html){
-		if(!error){
+		//Checks url to ensure it matches the supported websites
+	    var validurl = "foodnetwork.com/recipes/";
+	    if(url.indexOf(validurl) == -1)
+	    {
+		  html = "<div class='flashmessage'> ERROR LOADING RECIPE: please only use foodnetwork.com recipes </div>";
+	    }
+		else if(!error){
 			var $ = cheerio.load(html);
 
 			var food, ingredients, directions, image;
@@ -108,11 +131,35 @@ app.get('/scrape', function(req, res){
 	        fs.writeFile('output.json', JSON.stringify(json, null, 4), function(err){
         	console.log('File successfully written! - Check your project directory for the output.json file');
         })
-	 	var html = json.name + '<br> <img src="' +  json.image + '" alt="food" height="150px"> <br>';	
+        var ingredientoutput = '<ul> <h4>Ingredients</h4>'
+        ingredientlist = json.ingredients.split("::");
+        for(var i = 0;i<ingredientlist.length;i++)
+        {
+        	if(ingredientlist[i] != "")
+        	{
+        		ingredientoutput += '<li>'+ ingredientlist[i] + '</li>';
+        	}
+        }
+        ingredientoutput += '</ul>'
+        var directionoutput = '<ul> <h4>Directions</h4>'
+        directionlist = json.directions.split("::");
+        for(var i = 0;i<directionlist.length;i++)
+        {
+        	if(directionlist[i] != "")
+        	{
+        		directionoutput += '<li>'+ directionlist[i] + '</li>';
+        	}
+        }
+        directionoutput += '</ul>'
+	 	var html = '<div class="row"><div class="col-sm-6 col-md-4"> <div class="thumbnail"><img src="' +  
+	 	json.image + '" alt="food" height="150px" id="foodpic" style="border-radius:25px"><h3>' +
+	 	json.name + '</h3><div class="caption" style="display:none"><p>' + ingredientoutput +
+	 	'</p><p>' + directionoutput + '</p><p><a href="#" class="btn btn-primary" role="button">Add to List</a> <a href="#" class="btn btn-default" role="button">Delete</a></p> </div> </div></div></div>';
+	 	
 		}
 		else
 		{
-			html = "<div class='flashmessage'> ERROR LOADING RECIPE </div>";
+			html = "<div class='flashmessage'> ERROR LOADING RECIPE: invalid url </div>";
 		}
 		
 		res.render('index.ejs',{recipes: html}); // load the index.ejs file

@@ -46,6 +46,14 @@ module.exports = function(app, passport) {
 			user : req.user // get the user out of session and pass to template
 		});
 	});
+	
+	// process the login form
+	app.post('/login', passport.authenticate('local-login', {
+		successRedirect : '/profile', // redirect to the secure profile section
+		failureRedirect : '/login', // redirect back to the signup page if there is an error
+		failureFlash : true // allow flash messages
+	}));
+
 
 	// =====================================
 	// LOGOUT ==============================
@@ -61,6 +69,60 @@ module.exports = function(app, passport) {
 		failureRedirect : '/signup', // redirect back to the signup page if there is an error
 		failureFlash : true // allow flash messages
 	}));
+	
+
+	// Recipe api ---------------------------------------------------------------------
+	// get all todos
+	app.get('/api/recipe', function(req, res) {
+
+		// use mongoose to get all todos in the database
+		recipe.find(function(err, recipes) {
+
+			// if there is an error retrieving, send the error. nothing after res.send(err) will execute
+			if (err)
+				res.send(err)
+
+			res.json(recipes); // return all todos in JSON format
+		});
+	});
+
+	// create todo and send back all todos after creation
+	app.post('/api/recipe', function(req, res) {
+
+		// create a todo, information comes from AJAX request from Angular
+		recipe.create({
+			text : req.body.text,
+			done : false
+		}, function(err, recipes) {
+			if (err)
+				res.send(err);
+
+			// get and return all the todos after you create another
+			recipe.find(function(err, recipes) {
+				if (err)
+					res.send(err)
+				res.json(recipes);
+			});
+		});
+
+	});
+
+	// delete a todo
+	app.delete('/api/recipe/:recipe_id', function(req, res) {
+		recipe.remove({
+			_id : req.params.recipe_id
+		}, function(err, recipe) {
+			if (err)
+				res.send(err);
+
+			// get and return all the todos after you create another
+			recipe.find(function(err, recipes) {
+				if (err)
+					res.send(err)
+				res.json(recipes);
+			});
+		});
+	});
 };
 
 // route middleware to make sure a user is logged in
@@ -72,4 +134,5 @@ function isLoggedIn(req, res, next) {
 
 	// if they aren't redirect them to the home page
 	res.redirect('/');
+
 }
