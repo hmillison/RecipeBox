@@ -5,11 +5,24 @@
 	<title>Recipe Box</title>
 	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css"> <!-- load bootstrap css -->
 	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css"> <!-- load fontawesome -->
+	
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
 	<style>
 		body 		{ }
 	</style>
 	<script>
-			setTimeout($(".flashmessage").show().fadeOut(1500),2000);	
+			//setTimeout($(".flashmessage").show().fadeOut(1500),2000);	
+			$('#foodpic').live('click', function()
+			{
+				if($('.caption').is(':visible')) {
+						$('.caption').slideUp();
+				}
+				else
+				{
+					$('.caption').slideDown();
+				}
+			});
 	</script>
 </head>
 <body>
@@ -40,6 +53,7 @@
 		</div>
 <div class="container" id="recipe-output">
 <%- recipes %>
+
 </div>
 		
 
