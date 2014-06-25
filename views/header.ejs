@@ -1,0 +1,37 @@
+<!-- views/index.ejs -->
+<!doctype html>
+<html>
+<head>
+	<title>Recipe Box</title>
+	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css"> <!-- load bootstrap css -->
+	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css"> <!-- load fontawesome -->
+	<style>
+		body 		{ }
+	</style>
+</head>
+<body>
+
+	<nav class="navbar navbar-default" role="navigation">
+
+		<a href="/login" class="btn btn-default"><span class="fa fa-user"></span> Login</a>
+		<a href="/signup" class="btn btn-default"><span class="fa fa-user"></span> Signup</a>
+	</nav>
+		<!-- HEADER -->
+		<div class="jumbotron text-center">
+			<h1>Recipe Box <span class="label label-info"></span></h1>
+		</div>
+
+
+		<div id="scrape-form" class="row">
+			<div class="col-sm-8 col-sm-offset-2 text-center">
+				<form action="/" method="post">
+					<div class="form-group">
+
+						<!-- BIND THIS VALUE TO formData.text IN ANGULAR -->
+						<input type="text" class="form-control input-lg text-center" placeholder="Enter the URL of a recipe to get started!" name="url" id="url" >
+					</div>
+
+					<button type="submit" class="btn btn-primary btn-lg" >Add</button>
+				</form>
+			</div>
+		</div>
