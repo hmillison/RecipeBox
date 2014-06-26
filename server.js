@@ -48,18 +48,21 @@ var recipe = mongoose.model('recipe', {
 
 
 
-
 var posturl = ""
 // This route receives the posted form.
 // As explained above, usage of 'body-parser' means
 // that `req.body` will be filled in with the form elements
 app.post('/', function(req, res){
   posturl = req.body.url;
- 
-  res.redirect('/scrape');
+ if (req.user) {
+	 res.redirect('/scrape');
   	 var loading = "<i class='icon-spinner icon-spin icon-large'></i>";
-   res.render('index.ejs',{recipes: loading}); // load the index.ejs file
+   //res.render('index.ejs'); // load the index.ejs file
 
+} else {
+    res.redirect('/login');
+}
+ 
 });
 
 
@@ -110,7 +113,7 @@ app.get('/scrape', function(req, res){
 	        	ingredients = ""
 	        	list.each(function(i, elem) {
   					parts[i] = $(this).text();
-  					ingredients += parts[i] + "::";
+  					ingredients += parts[i] + "//";
 				});
 	        	json.ingredients = ingredients;
 	        })
@@ -124,7 +127,7 @@ app.get('/scrape', function(req, res){
 	        	directions = ""
 	        	list.each(function(i,elem){
 	        		parts[i] = $(this).text();
-	        		directions += parts[i] + "::";
+	        		directions += parts[i] + "//";
 	        	});
 	        	json.directions = directions;	
 	        })
@@ -132,7 +135,7 @@ app.get('/scrape', function(req, res){
         	console.log('File successfully written! - Check your project directory for the output.json file');
         })
         var ingredientoutput = '<ul> <h4>Ingredients</h4>'
-        ingredientlist = json.ingredients.split("::");
+        ingredientlist = json.ingredients.split("//");
         for(var i = 0;i<ingredientlist.length;i++)
         {
         	if(ingredientlist[i] != "")
@@ -142,7 +145,7 @@ app.get('/scrape', function(req, res){
         }
         ingredientoutput += '</ul>'
         var directionoutput = '<ul> <h4>Directions</h4>'
-        directionlist = json.directions.split("::");
+        directionlist = json.directions.split("//");
         for(var i = 0;i<directionlist.length;i++)
         {
         	if(directionlist[i] != "")
@@ -161,8 +164,12 @@ app.get('/scrape', function(req, res){
 		{
 			html = "<div class='flashmessage'> ERROR LOADING RECIPE: invalid url </div>";
 		}
-		
-		res.render('index.ejs',{recipes: html}); // load the index.ejs file
+		req.user.recipes.push = json;
+		req.user.save(function(err) {
+                    if (err)
+                        throw err;
+                });
+		res.redirect('/');
         //res.write('Check your console!')
 	})
 })
