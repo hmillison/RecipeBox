@@ -1,38 +1,38 @@
 
-
+<br>
 <div class="row">
 <ul>
 <% for(var i=0; i<recipes.length; i++) {%>
 <div class="col-sm-6 col-md-4"> 
-<div class="thumbnail">
-	<img src="<%= recipes[i].image %> " alt="food" height="150px" id="foodpic" style="border-radius:25px">
+<div class="thumbnail" >
+	<img src="<%= recipes[i].image %> " alt="food" class="foodpic" id="<%= i %>" style="border-radius:25px">
 	<h3><%= recipes[i].name %></h3>
-
-		<div class="caption" style="display:none">
+		<div class="pagination-centered">
+	 			<a href="#" class="btn btn-primary" role="button">Add to List</a> 
+	 			<a href="#" class="btn btn-default" role="button">Delete</a>
+	 	</div> 
+		<div class="caption" id="<%= i %>" style="display:none">
 			<p>
 			<%  ingredientlist = recipes[i].ingredients.split("//") %>
 			<%  directionlist = recipes[i].directions.split("//") %>
 			<ul> <h4>Ingredients</h4>
-				<% for(var i=0; i<ingredientlist.length; i++) {%>
-						<%if(ingredientlist[i] != ""){ %>
-							<li> <%= ingredientlist[i] %></li>
+				<% for(var k=0; k<ingredientlist.length; k++) {%>
+						<%if(ingredientlist[k] != ""){ %>
+							<li> <%= ingredientlist[k] %></li>
 						<%}%>
 				<% } %>
 			</ul>
 	 		</p>
 	 		<p>
 	 		<ul><h4>Directions</h4>
-			<% for(var i=0; i<directionlist.length; i++) {%>
-					<%if(directionlist[i] != ""){ %>
-						<li> <%= directionlist[i] %></li>
+			<% for(var j=0; j<directionlist.length; j++) {%>
+					<%if(directionlist[j] != ""){ %>
+						<li> <%= directionlist[j] %></li>
 					<%}%>
 				<% } %>
 			</ul>
 	 		</p>
-	 		<p>
-	 			<a href="#" class="btn btn-primary" role="button">Add to List</a> 
-	 			<a href="#" class="btn btn-default" role="button">Delete</a>
-	 		</p> 
+	 		
 	 	</div> 
 </div>
 </div>

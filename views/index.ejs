@@ -5,7 +5,8 @@
 	<title>Recipe Box</title>
 	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css"> <!-- load bootstrap css -->
 	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css"> <!-- load fontawesome -->
-	
+   <link rel="stylesheet" href="./css/main.css" type="text/css" media="all"><!-- load custom css -->
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
     <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
 	<style>
@@ -13,14 +14,15 @@
 	</style>
 	<script>
 			//setTimeout($(".flashmessage").show().fadeOut(1500),2000);	
-			$('#foodpic').live('click', function()
+			$('.foodpic').live('click', function()
 			{
-				if($('.caption').is(':visible')) {
-						$('.caption').slideUp();
+				var foodid = $(this).attr('id');
+				if($('#' + foodid + '.caption').is(':visible')) {
+						$('#' + foodid + '.caption').slideUp();
 				}
 				else
 				{
-					$('.caption').slideDown();
+					$('#' + foodid + '.caption').slideDown();
 				}
 			});
 	</script>
@@ -28,9 +30,7 @@
 <body>
 
 	<nav class="navbar navbar-default" role="navigation">
-
-		<a href="/login" class="btn btn-default"><span class="fa fa-user"></span> Login</a>
-		<a href="/signup" class="btn btn-default"><span class="fa fa-user"></span> Signup</a>
+			<% include nav.ejs %>
 	</nav>
 		<!-- HEADER -->
 		<div class="jumbotron text-center">
@@ -43,7 +43,6 @@
 				<form action="/" method="post">
 					<div class="form-group">
 
-						<!-- BIND THIS VALUE TO formData.text IN ANGULAR -->
 						<input type="text" class="form-control input-lg text-center" placeholder="Enter the URL of a recipe to get started!" name="url" id="url" >
 					</div>
 
@@ -51,8 +50,8 @@
 				</form>
 			</div>
 		</div>
-<div class="container" id="recipe-output">
-<%- recipes %>
+<div class="container">
+			<% include recipe.ejs %>
 
 </div>
 		
