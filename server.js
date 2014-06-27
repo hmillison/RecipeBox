@@ -22,7 +22,7 @@ app.use(bodyParser());
 	var port = process.env.PORT || 8080; // set our port
 	mongoose.connect(db.url); // connect to our mongoDB database
 	
-     app.use(express.static(__dirname + '../public'));
+    app.use(express.static(__dirname + '/public'));
  
 		
        require('./config/passport')(passport); // pass passport for configuration
@@ -164,7 +164,7 @@ app.get('/scrape', function(req, res){
 		{
 			html = "<div class='flashmessage'> ERROR LOADING RECIPE: invalid url </div>";
 		}
-		req.user.recipes.push = json;
+		req.user.recipes.push(json);
 		req.user.save(function(err) {
                     if (err)
                         throw err;

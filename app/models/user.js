@@ -4,13 +4,6 @@ var mongoose = require('mongoose');
 var bcrypt   = require('bcrypt-nodejs');
 
 
-var Recipe = new mongoose.Schema({
-	name : String,
-    image : String,
-    ingredients: String,
-    directions: String
-    	
-});
 
 // define the schema for our user model
 var userSchema = mongoose.Schema({
@@ -19,7 +12,7 @@ var userSchema = mongoose.Schema({
         email        : String,
         password     : String,
     },
-    recipes : Array
+    recipes : []
 
 });
 
