@@ -5,15 +5,11 @@ module.exports = function(app, passport) {
 	// HOME PAGE (with login links) ========
 	// =====================================
 	app.get('/', function(req, res) {
-	var output = '<a href="/login" class="btn btn-default"><span class="fa fa-user"></span> Login</a><a href="/signup" class="btn btn-default"><span class="fa fa-user"></span> Signup</a>';
-	var userrecipe = "";
+	var output = "";
 	 if (req.user) {
-	 	userrecipe = req.user.recipes;
-	 	console.log(req.user.recipes);
-	 	output  = 'User:' + req.user.local.email +
-	 	'<a href="/logout" class="btn btn-default"><span class="fa fa-user"></span>Logout</a>';
+	 	output  = req.user;
 	 }	
-		res.render('index.ejs',{string:output,recipes:userrecipe});
+		res.render('index.ejs',{user:output,errormessage:""});
 	});
 	
 	

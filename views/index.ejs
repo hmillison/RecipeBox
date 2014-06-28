@@ -13,7 +13,7 @@
 		body 		{ }
 	</style>
 	<script>
-			//setTimeout($(".flashmessage").show().fadeOut(1500),2000);	
+			setTimeout($(".alert alert-danger").show().fadeOut(1500),2000);	
 			$('.foodpic').live('click', function()
 			{
 				var foodid = $(this).attr('id');
@@ -35,11 +35,12 @@
 		<!-- HEADER -->
 		<div class="jumbotron text-center">
 			<h1>Recipe Box <span class="label label-info"></span></h1>
+			save your favorite recipes online
 		</div>
-
 
 		<div id="scrape-form" class="row">
 			<div class="col-sm-8 col-sm-offset-2 text-center">
+					<%- errormessage %>
 				<form action="/" method="post">
 					<div class="form-group">
 
