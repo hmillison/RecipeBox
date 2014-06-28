@@ -1,1 +1,9 @@
-  <%- string %>
+
+<% if(user == "") {%>
+	<a href="/login" class="btn btn-default"><span class="fa fa-user"></span> Login</a>
+	<a href="/signup" class="btn btn-default"><span class="fa fa-user"></span> Signup</a>
+<% } else {%>
+	 <%= user.local.email %>
+	 <a href="/logout" class="btn btn-default"><span class="fa fa-user"></span>Logout</a>
+<% } %>
+ <a href="/" class="btn btn-default" id="bookmarklet">Drag me to your bookmarks to grab recipes as you browse</a>

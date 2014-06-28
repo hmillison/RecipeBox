@@ -68,23 +68,25 @@ app.post('/', function(req, res){
 
 //=====web scraper for Food Network recipes===
 app.get('/scrape', function(req, res){
-
+	var validurl = "foodnetwork.com/recipes/";
 	url = posturl;
 	//Appends http:// to urls to ensure proper scraping
 	if(url.substr(0,3) == "www")
 	{
 		url = "http://" + url
 	}
-	
-	
-	request(url, function(error, response, html){
-		//Checks url to ensure it matches the supported websites
-	    var validurl = "foodnetwork.com/recipes/";
-	    if(url.indexOf(validurl) == -1)
-	    {
-		  html = "<div class='flashmessage'> ERROR LOADING RECIPE: please only use foodnetwork.com recipes </div>";
-	    }
-		else if(!error){
+	//Checks url to ensure it matches the supported websites
+	if(url.indexOf(validurl) == -1)
+	{
+	    html = "<div class='alert alert-danger'>Error Loading Recipe</div>";
+	    res.render('index.ejs',{
+			user:req.user,
+			errormessage:html
+		});
+	}
+	else{
+		request(url, function(error, response, html){ 
+		if(!error){
 			var $ = cheerio.load(html);
 
 			var food, ingredients, directions, image;
@@ -160,19 +162,20 @@ app.get('/scrape', function(req, res){
 	 	'</p><p>' + directionoutput + '</p><p><a href="#" class="btn btn-primary" role="button">Add to List</a> <a href="#" class="btn btn-default" role="button">Delete</a></p> </div> </div></div></div>';
 	 	
 		}
-		else
-		{
-			html = "<div class='flashmessage'> ERROR LOADING RECIPE: invalid url </div>";
-		}
-		req.user.recipes.push(json);
-		req.user.save(function(err) {
+		
+			req.user.recipes.push(json);
+			req.user.save(function(err) {
                     if (err)
                         throw err;
-                });
+                });      
 		res.redirect('/');
         //res.write('Check your console!')
-	})
-})
+		});
+		}
+	
+
+});
+
 app.listen('8081');
 console.log('Magic happens on port 8081');
 exports = module.exports = app;
