@@ -13,7 +13,7 @@
 		body 		{ }
 	</style>
 	<script>
-			setTimeout($(".alert alert-danger").show().fadeOut(1500),2000);	
+		
 			$('.foodpic').live('click', function()
 			{
 				var foodid = $(this).attr('id');
@@ -43,7 +43,6 @@
 					<%- errormessage %>
 				<form action="/" method="post">
 					<div class="form-group">
-
 						<input type="text" class="form-control input-lg text-center" placeholder="Enter the URL of a recipe to get started!" name="url" id="url" >
 					</div>
 

@@ -133,48 +133,61 @@ app.get('/scrape', function(req, res){
 	        	});
 	        	json.directions = directions;	
 	        })
-	        fs.writeFile('output.json', JSON.stringify(json, null, 4), function(err){
-        	console.log('File successfully written! - Check your project directory for the output.json file');
-        })
-        var ingredientoutput = '<ul> <h4>Ingredients</h4>'
-        ingredientlist = json.ingredients.split("//");
-        for(var i = 0;i<ingredientlist.length;i++)
-        {
-        	if(ingredientlist[i] != "")
-        	{
-        		ingredientoutput += '<li>'+ ingredientlist[i] + '</li>';
-        	}
-        }
-        ingredientoutput += '</ul>'
-        var directionoutput = '<ul> <h4>Directions</h4>'
-        directionlist = json.directions.split("//");
-        for(var i = 0;i<directionlist.length;i++)
-        {
-        	if(directionlist[i] != "")
-        	{
-        		directionoutput += '<li>'+ directionlist[i] + '</li>';
-        	}
-        }
-        directionoutput += '</ul>'
-	 	var html = '<div class="row"><div class="col-sm-6 col-md-4"> <div class="thumbnail"><img src="' +  
-	 	json.image + '" alt="food" height="150px" id="foodpic" style="border-radius:25px"><h3>' +
-	 	json.name + '</h3><div class="caption" style="display:none"><p>' + ingredientoutput +
-	 	'</p><p>' + directionoutput + '</p><p><a href="#" class="btn btn-primary" role="button">Add to List</a> <a href="#" class="btn btn-default" role="button">Delete</a></p> </div> </div></div></div>';
-	 	
+        
 		}
 		
 			req.user.recipes.push(json);
+			
 			req.user.save(function(err) {
                     if (err)
                         throw err;
                 });      
-		res.redirect('/');
-        //res.write('Check your console!')
+		res.redirect('/sort');
 		});
 		}
 	
 
 });
+
+//Deletes Recipe from Collection
+app.get('/delete', function(req, res){
+var deleteid = req.query.item;
+var temp = [];
+temp = req.user.recipes;
+temp.splice(deleteid,1);
+	req.user.recipes = temp;
+	req.user.save(function(err) {
+             	 if (err)
+                	throw err;
+                });      
+	res.redirect('/');
+	res.render('index.ejs',{user:req.user,errormessage:""});
+
+});
+
+//Sorts Recipes Alphabetically
+app.get('/sort', function(req, res){
+	var temp = [];
+	temp = req.user.recipes;
+	temp.sort(compare);
+	req.user.recipes = temp;
+	req.user.save(function(err) {
+         if (err)
+                throw err;
+                }); 
+	res.render('index.ejs',{user:req.user,errormessage:""});
+});
+
+//Helper function for sort
+function compare(a,b) {
+  if (a.name < b.name)
+     return -1;
+  if (a.name > b.name)
+    return 1;
+  return 0;
+}
+
+
 
 app.listen('8081');
 console.log('Magic happens on port 8081');

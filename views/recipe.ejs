@@ -8,11 +8,11 @@
 <% } %>
 <div class="col-sm-6 col-md-4"> 
 <div class="thumbnail" >
-	<img src="<%= user.recipes[i].image %> " alt="food" class="foodpic" id="<%= i %>">
+	<img src="<%= user.recipes[i].image %> " alt="Recipe Details" class="foodpic" id="<%= i %>">
 	<h3><%= user.recipes[i].name %></h3>
 		<div class="pagination-centered">
 	 			<a href="#" class="btn btn-primary" role="button">Add to List</a> 
-	 			<a href="#" class="btn btn-default" role="button">Delete</a>
+	 			<a href="/delete?item=<%= i %>" class="btn btn-default" id="delete<%= i %>" role="button">Delete</a>
 	 	</div> 
 		<div class="caption" id="<%= i %>" style="display:none">
 			<p>
