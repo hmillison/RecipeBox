@@ -35,19 +35,55 @@
 			});
 		
 		$("#addrecipe").click(function(){
-					console.log("submitted");
 		  			$('#recipes').hide();
 					$('#loader').show();
 		});
 		
-		$("[id*='delete']").unbind("click").click(function ()
+		$("[id*='delete']").live('click',function ()
 		{
-			var deleteindex = $(this).attr('id')
-			var deleteindex = deleteindex.substr(7,7);
+			var deleteindex = $(this).attr('id');
+			 deleteindex = deleteindex.substr(6,6);
 			$('#'+deleteindex).slideUp(1000);
+			$.ajax({
+ 				 type: "POST",
+ 				 url: "/delete?item=" + deleteindex,
+
+				}).done(function() {
+ 				 		setTimeout(location.href = "/",5000);
+					});
+				
 		});
 		
-		$('#myModal').modal()
+		$("[id*='listadd']").live('click',function ()
+		{
+			var addindex = $(this).attr('id');
+			 addindex =addindex.substr(7,7);
+			$.ajax({
+ 				 type: "POST",
+ 				 url: "/listadd?item=" + addindex,
+
+				}).done(function() {
+ 				 		setTimeout(location.href = "/",1000);
+					});
+				
+		});
+		
+		$("[id*='listrm']").live('click',function ()
+		{
+			var deleteindex = $(this).attr('id');
+			deleteindex = deleteindex.substr(6,6);
+			$.ajax({
+ 				 type: "POST",
+ 				 url: "/listrm?item=" + deleteindex,
+
+				}).done(function() {
+ 				 		setTimeout(location.href = "/",1000);
+						$('#grocerylist').modal('show');
+					});
+				
+		});
+		
+		$('#grocerylist').modal()
 
 	</script>
 </head>
@@ -76,10 +112,8 @@
 			</div>
 		</div>
 <div id="loader"><img src="images/loader.gif" style="margin-top:10px"></div>
-<div class="container" id="recipes">
 		<% include recipe.ejs %>
 
-</div>
 <!-- Modal -->
 <div class="modal fade" id="grocerylist" tabindex="-1" role="dialog" aria-labelledby="grocerylist" aria-hidden="true">
   <div class="modal-dialog">
@@ -92,7 +126,7 @@
 	 		<% if(user != "empty" && user.list.length > 0) {%>
 	 			<ul>
 	 				<% for(var i = 0;i<(user.list.length);i++) { %>
-	 			 		<li class="glist"> <%= user.list[i].name %> 	<a href="/listrm?item=<%= i %>" class="btn btn-default">Delete</a></li>
+	 			 		<li class="glist"> <%= user.list[i].name %> 	<button id="listrm<%= i %>" class="btn btn-default">Delete</a></li>
 	 				<% }%>
 	 			</ul>
 	 		<% }%>

@@ -73,15 +73,21 @@ app.post('/', function(req, res){
 
 //=====web scraper for Food Network recipes===
 app.get('/scrape', function(req, res){
-	var validurl = "foodnetwork.com/recipes/";
+	var validurl = [
+						"foodnetwork.com/recipes/",
+						"allrecipes.com/Recipe/",
+						"food.com/recipe/",
+						"bonappetit.com/recipe/"
+						];
 	url = posturl;
+	var urltype = getScrapeFxn(url,validurl);
 	//Appends http:// to urls to ensure proper scraping
 	if(url.substr(0,3) == "www")
 	{
 		url = "http://" + url
 	}
 	//Checks url to ensure it matches the supported websites
-	if(url.indexOf(validurl) == -1)
+	if(urltype == -1)
 	{
 	    html = "<div class='alert alert-danger' id='flashmessage'>Error Loading Recipe</div>";
 	    //res.render('index.ejs',{
@@ -92,122 +98,76 @@ app.get('/scrape', function(req, res){
 		res.redirect('/');
 
 	}
-	else{
+	else
+		{
 		request(url, function(error, response, html){ 
 		if(!error){
-			var $ = cheerio.load(html);
+		var $ = cheerio.load(html);
+		var newrecipe = { name : "", image: "", ingredients : "", directions : ""};
+		//determine which method needs to be used to scrape
+		if(urltype == 0)
+		{
+			newrecipe = scrape.foodnetwork(url, $);
+		}
+		else if(urltype == 1)
+		{
+			newrecipe = scrape.allrecipes(url, $);
 
-			var food, ingredients, directions, image;
-			var json = { name : "", image: "", ingredients : "", directions : ""};
-	
-			//Get name of food item
-			$('.tier-3.title').filter(function(){
-		        var data = $(this);
-		        name = data.children().first().text();
-
-		        json.name = name;
-	        })
-
-			 //Get food image url
-	        $('.col12.pic.collapsed').filter(function(){
-	        	var data = $(this).find('img');
-	        	image = data.attr('src');
-	        	json.image = image;	
-	        })
-	        
-			//Get ingredients separated by ::
-	        $('.col6.ingredients').filter(function(){
-	        	var data = $(this);
-	        	var list = data.children().last().children();
-	        	var parts = [];
-	        	ingredients = ""
-	        	list.each(function(i, elem) {
-  					parts[i] = $(this).text();
-  					ingredients += parts[i] + "//";
-				});
-	        	json.ingredients = ingredients;
-	        })
-	        
-	       
-	        //Get directions separated by ::
-	        $('.col12.directions').filter(function(){
-	        	var data = $(this);
-	        	var list = data.children().nextUntil($('.categories'));
-	        	var parts = [];
-	        	directions = ""
-	        	list.each(function(i,elem){
-	        		parts[i] = $(this).text();
-	        		directions += parts[i] + "//";
-	        	});
-	        	json.directions = directions;	
-	        })
-        
+		}
+		else if(urltype == 2)
+		{
+			newrecipe = scrape.food(url, $);
+		}
+		else if(urltype == 3)
+		{
+			newrecipe = scrape.bonappetit(url, $);
 		}
 		
-			req.user.recipes.push(json);
+		//check if the recipe was created correctly
+	if(newrecipe != null && (newrecipe.name != "" || newrecipe.ingredients != "" || newrecipe.directions != ""))
+		{
+			req.user.recipes.push(newrecipe);
 			
 			req.user.save(function(err) {
-                    if (err)
+                    if (err){
                         throw err;
-                }); 
-        req.flash('msg',html);     
-		res.redirect('/sort');
-		});
+                        html = "<div class='alert alert-danger' id='flashmessage'>Error Loading Recipe</div>";
+						req.flash('msg',html);
+                        res.redirect('/');
+                    }
+                    else{
+                       req.flash('msg',html);     
+						res.redirect('/sort');
+                    }
+                });
+         
+        }
+        else
+        {
+        	html = "<div class='alert alert-danger' id='flashmessage'>Error Loading Recipe</div>";
+			req.flash('msg',html);
+			res.redirect('/');
+        }
+       
 		}
+	})
 	
-
+}
 });
 
-// =====================================
-// Deletes Recipe from Collection=======
-// =====================================
-app.get('/delete', function(req, res){
-console.log(req.headers.referrer);
-var deleteid = req.query.item;
-var temp = [];
-temp = req.user.recipes;
-temp.splice(deleteid,1);
-	req.user.recipes = temp;
-	req.user.save(function(err) {
-             	 if (err)
-                	throw err;
-                });      
-	res.render('index.ejs',{user:req.user,errormessage:""});
-	//res.redirect('/');
-});
-
-// =====================================
-// Add Recipe to Grocery List===========
-// =====================================
-app.get('/listadd', function(req, res){
-	var deleteid = req.query.item;
-	req.user.list.push(req.user.recipes[deleteid]);
-	req.user.save(function(err) {
-         		if (err)
-              	  throw err;
-                }); 
-	res.render('index.ejs',{user:req.user,errormessage:""});
-	//res.redirect('/');
-
-});
-
-// =====================================
-// Remove Recipe to Grocery List===========
-// =====================================
-app.get('/listrm', function(req, res){
-	var deleteid = req.query.item;
-	var temp = [];
-	temp = req.user.list;
-	temp.splice(deleteid,1);
-	req.user.list = temp;
-	req.user.save(function(err) {
-             	 if (err)
-                	throw err;
-                });  
-	res.render('index.ejs',{user:req.user,errormessage:""});
-	//res.redirect('/');
-
-});
+//helper function to determine scraping function
+function getScrapeFxn(url, valid)
+{
+	var output = -1;
+	for(var i = 0;i<valid.length;i++)
+	{
+		if(url.indexOf(valid[i]) != -1)
+		{
+			output = i;
+		}	
+	}
+	return output;
+}
 
 // =====================================
 // Sorts Recipes Alphabetically=========
@@ -237,9 +197,66 @@ function compare(a,b) {
   return 0;
 }
 
+// =====================================
+// Deletes Recipe from Collection=======
+// =====================================
+app.post('/delete', function(req, res){
+	var deleteid = req.query.item;
+	var temp = [];
+	temp = req.user.recipes;
+	temp.splice(deleteid,1);
+	req.user.recipes = temp;
+	req.user.save(function(err) {
+             	 if (err)
+                	throw err;
+                });      
+	//res.render('index.ejs',{user:req.user,errormessage:""});
+	res.redirect('/');
+});
+
+// =====================================
+// Add Recipe to Grocery List===========
+// =====================================
+app.post('/listadd', function(req, res){
+	var addid = req.query.item;
+	req.user.list.push(req.user.recipes[addid]);
+	req.user.save(function(err) {
+         		if (err)
+              	  throw err;
+                }); 
+	//res.render('index.ejs',{user:req.user,errormessage:""});
+	res.redirect('/');
+
+});
+
+// =====================================
+// Remove Recipe to Grocery List===========
+// =====================================
+app.post('/listrm', function(req, res){
+	var deleteid = req.query.item;
+	var temp = [];
+	temp = req.user.list;
+	temp.splice(deleteid,1);
+	req.user.list = temp;
+	req.user.save(function(err) {
+             	 if (err)
+                	throw err;
+                });  
+	//res.render('index.ejs',{user:req.user,errormessage:""});
+	res.redirect('/');
+
+});
+
+
+
+// =====================================
+// Sends Grocery List to User Email=====
+// =====================================
+
+//email server config
 var server  = email.server.connect({
-   user:    "", 
-   password:"", 
+   user:    "hmillison@gmail.com", 
+   password:"", /
    host:    "smtp.gmail.com", 
    ssl:     true
 });
@@ -249,6 +266,7 @@ var sendto = req.user.local.email;
 var content = "<body>";
 var list = req.user.list;
 var shoppinglist;
+var output = "helloworld";
 for(var i = 0;i<list.length;i++)
 {
 	content += "<ul> " + list[i].name;
@@ -277,9 +295,27 @@ var message ={
    ]
 };
 
-server.send(message, function(err, message) { console.log(err || message); });
-req.flash('msg',"<div class='alert alert-success' id='flashmessage'>Email Sent</div>");
-res.redirect('/');
+server.send(message, function(err, message) { 
+							if(err){
+								output = "<div class='alert alert-danger' id='flashmessage'>Error Sending Email!</div>";
+								req.flash('msg',output);
+								res.redirect('/');
+
+							}
+							else
+							{
+							 output = "<div class='alert alert-success' id='flashmessage'>Email Sent!</div>";
+							req.user.list = [];
+							req.user.save(function(err) {
+             	 						if (err)
+                						throw err;
+                						});
+                				req.flash('msg',output);
+								res.redirect('/')
+							}
+						
+						});
+
 });
 
 
