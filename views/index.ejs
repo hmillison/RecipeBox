@@ -3,12 +3,13 @@
 <html>
 <head>
 	<title>Recipe Box</title>
-	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css"> <!-- load bootstrap css -->
 	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css"> <!-- load fontawesome -->
    <link rel="stylesheet" href="./css/main.css" type="text/css" media="all"><!-- load custom css -->
+    <link href="css/bootstrap-cosmo.min.css" rel="stylesheet">
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
     <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
 	<style>
 		body 		{ }
 	</style>
@@ -25,6 +26,29 @@
 					$('#' + foodid + '.caption').slideDown();
 				}
 			});
+			
+			$(window).load(function() {   
+  					$('#loader').hide();
+  					$('#recipes').show();
+  					$("#flashmessage").fadeOut(2000);
+
+			});
+		
+		$("#addrecipe").click(function(){
+					console.log("submitted");
+		  			$('#recipes').hide();
+					$('#loader').show();
+		});
+		
+		$("[id*='delete']").unbind("click").click(function ()
+		{
+			var deleteindex = $(this).attr('id')
+			var deleteindex = deleteindex.substr(7,7);
+			$('#'+deleteindex).slideUp(1000);
+		});
+		
+		$('#myModal').modal()
+
 	</script>
 </head>
 <body>
@@ -35,26 +59,52 @@
 		<!-- HEADER -->
 		<div class="jumbotron text-center">
 			<h1>Recipe Box <span class="label label-info"></span></h1>
-			save your favorite recipes online
+			collect your favorite recipes online
 		</div>
 
 		<div id="scrape-form" class="row">
 			<div class="col-sm-8 col-sm-offset-2 text-center">
-					<%- errormessage %>
+				<%- errormessage %>
 				<form action="/" method="post">
 					<div class="form-group">
 						<input type="text" class="form-control input-lg text-center" placeholder="Enter the URL of a recipe to get started!" name="url" id="url" >
 					</div>
 
-					<button type="submit" class="btn btn-primary btn-lg" >Add</button>
+					<button type="submit" id="addrecipe" class="btn btn-primary btn-lg" >Add</button>
 				</form>
+
 			</div>
 		</div>
-<div class="container">
-			<% include recipe.ejs %>
+<div id="loader"><img src="images/loader.gif" style="margin-top:10px"></div>
+<div class="container" id="recipes">
+		<% include recipe.ejs %>
 
 </div>
-		
+<!-- Modal -->
+<div class="modal fade" id="grocerylist" tabindex="-1" role="dialog" aria-labelledby="grocerylist" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" id="grocerylist">Grocery List</h4>
+      </div>
+      <div class="modal-body">
+	 		<% if(user != "empty" && user.list.length > 0) {%>
+	 			<ul>
+	 				<% for(var i = 0;i<(user.list.length);i++) { %>
+	 			 		<li class="glist"> <%= user.list[i].name %> 	<a href="/listrm?item=<%= i %>" class="btn btn-default">Delete</a></li>
+	 				<% }%>
+	 			</ul>
+	 		<% }%>
+
+      </div>
+      <div class="modal-footer">
+      	<a href="/listsend" class="btn btn-primary btn-default">Send Grocery List</a>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>		
 
 
 </body>

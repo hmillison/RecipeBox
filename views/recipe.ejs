@@ -1,17 +1,17 @@
 
 <br>
 <ul>
-<% if(user != "") {%>
+<% if(user != "empty") {%>
 <% for(var i=0; i<user.recipes.length; i++) {%>
-<% if(i % 3 == 0) {%>
+<% if(i % 4 == 0) {%>
 	<div class="row">
 <% } %>
-<div class="col-sm-6 col-md-4"> 
+<div class="col-sm-6 col-lg-3" id="<%= i %>"> 
 <div class="thumbnail" >
 	<img src="<%= user.recipes[i].image %> " alt="Recipe Details" class="foodpic" id="<%= i %>">
 	<h3><%= user.recipes[i].name %></h3>
 		<div class="pagination-centered">
-	 			<a href="#" class="btn btn-primary" role="button">Add to List</a> 
+	 			<a href="/listadd?item=<%= i %>" class="btn btn-primary" role="button">Add to List</a> 
 	 			<a href="/delete?item=<%= i %>" class="btn btn-default" id="delete<%= i %>" role="button">Delete</a>
 	 	</div> 
 		<div class="caption" id="<%= i %>" style="display:none">
@@ -39,7 +39,7 @@
 	 	</div> 
 </div>
 </div>
-<% if((i + 1) % 3 == 0)  {%>
+<% if((i + 1) % 4 == 0)  {%>
 	</div>
 <% } } } %>
 </ul>
