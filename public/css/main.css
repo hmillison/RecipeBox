@@ -1,14 +1,39 @@
 nav > *{
 margin-left:5px;
-margin-top:5px;
+margin-top:3px;
 }
 
 h4{
 text-align:center;
 }
 
+#userinfo{
+margin-left:20px;
+margin-top:20px;
+color:#fff;
+}
+
 #bookmarklet
 {
 float:right;
 margin-right:5px;
+}
+
+
+.glist
+{
+margin-bottom:10px;
+}
+
+#loader{
+text-align:center;
+}
+
+#flashmessage{
+padding-top:30px;
+}
+
+.btn-primary:hover, .btn-primary:focus, .btn-primary:active, .btn-primary.active, .open>.dropdown-toggle.btn-primary{
+	background-color:#007fff !important; 
+	border-color:#007fff !important;
 }

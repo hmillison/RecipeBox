@@ -1,17 +1,6 @@
 // app/routes.js
 module.exports = function(app, passport) {
 
-	// =====================================
-	// HOME PAGE (with login links) ========
-	// =====================================
-	app.get('/', function(req, res) {
-	var output = "";
-	 if (req.user) {
-	 	output  = req.user;
-	 }	
-		res.render('index.ejs',{user:output,errormessage:""});
-	});
-	
 	
 
 	// =====================================

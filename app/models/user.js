@@ -12,7 +12,8 @@ var userSchema = mongoose.Schema({
         email        : String,
         password     : String,
     },
-    recipes : []
+    recipes : [],
+    list : []
 
 });
 
