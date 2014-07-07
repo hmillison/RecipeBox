@@ -3,11 +3,14 @@
 	<a href="/login" class="btn btn-default"> Login</a>
 	<a href="/signup" class="btn btn-default"> Signup</a>
 <% } else {%>
-	 <span id="userinfo"> <%= user.local.email %> </span>
+	 <button class="btn btn-default"> <%= user.local.email %> </button>
 	 <a href="/logout" class="btn btn-default">Logout</a>
+	
+	<button class="btn btn-default" data-toggle="modal" data-target=".addrecipedialog">Add Recipe</button>
 	 <% if(user.list.length > 0) {%>
 	 	<button class="btn btn-primary btn-default" id="managegrocery" data-toggle="modal" data-target="#grocerylist">
 				Manage Grocery List
 		</button>
+	<% } %>
 	 <a href="javascript:<html><body onload='$('#scrape').submit()'><form method='post' action='http://localhost:8081/scrape' id='scrape'><input type='hidden' name='url' id='url' value='document.URL'></form></body></html>;" class="btn btn-default" id="bookmarklet">Drag me to your bookmarks to grab recipes as you browse</a>
-<% } }%>
+<% }%>

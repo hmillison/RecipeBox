@@ -37,3 +37,26 @@ padding-top:30px;
 	background-color:#007fff !important; 
 	border-color:#007fff !important;
 }
+
+#addrecipe > *{
+margin-bottom:5px;
+}
+
+.recipe-image-caption{
+	overflow:hidden;
+	white-space:nowrap;
+}
+
+.file-caption-name
+{
+	font-size:10px !important;
+	max-width:200px;
+	float:left;
+}
+
+.recipe-image-preview{
+	text-align:center;
+}
+.recipe-image-input{
+	max-width:558px;
+}

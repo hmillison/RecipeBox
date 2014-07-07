@@ -99,7 +99,7 @@ app.get('/scrape', function(req, res){
 
 	}
 	else
-		{
+	{
 		request(url, function(error, response, html){ 
 		if(!error){
 		var $ = cheerio.load(html);
@@ -124,7 +124,7 @@ app.get('/scrape', function(req, res){
 		}
 		
 		//check if the recipe was created correctly
-	if(newrecipe != null && (newrecipe.name != "" || newrecipe.ingredients != "" || newrecipe.directions != ""))
+		if(newrecipe != null && (newrecipe.name != "" || newrecipe.ingredients != "" || newrecipe.directions != ""))
 		{
 			req.user.recipes.push(newrecipe);
 			
@@ -152,7 +152,7 @@ app.get('/scrape', function(req, res){
 		}
 	})
 	
-}
+	}
 });
 
 //helper function to determine scraping function
@@ -230,7 +230,7 @@ app.post('/listadd', function(req, res){
 });
 
 // =====================================
-// Remove Recipe to Grocery List===========
+// Remove Recipe from Grocery List======
 // =====================================
 app.post('/listrm', function(req, res){
 	var deleteid = req.query.item;
@@ -256,7 +256,7 @@ app.post('/listrm', function(req, res){
 //email server config
 var server  = email.server.connect({
    user:    "hmillison@gmail.com", 
-   password:"", /
+   password:"",
    host:    "smtp.gmail.com", 
    ssl:     true
 });
@@ -318,6 +318,42 @@ server.send(message, function(err, message) {
 
 });
 
+// =====================================
+// Add a Recipe from User Input=========
+// =====================================
+app.post('/addrecipe', function(req, res){
+	var html = "";
+	var newrecipe = { name : "", image: "", ingredients : "", directions : ""};
+	//check if the recipe was added correctly
+	if(req.body != null && (req.body.name != "" || req.body.ingredients != "" || req.body.directions != ""))
+	{
+		newrecipe.name = req.body.name;
+		newrecipe.image = req.body.image;
+		newrecipe.ingredients = req.body.ingredients;
+		newrecipe.directions = req.body.directions;
+		req.user.recipes.push(newrecipe);
+			
+		req.user.save(function(err) {
+               if (err){
+                  throw err;
+                    html = "<div class='alert alert-danger' id='flashmessage'>Error Adding Recipe</div>";
+					req.flash('msg',html);
+                     res.redirect('/');
+                    }
+                    else{
+                    req.flash('msg',html);     
+					res.redirect('/sort');
+                    }
+                });
+         
+	}
+	else
+	{
+		     html = "<div class='alert alert-danger' id='flashmessage'>Error Adding Recipe</div>";
+			req.flash('msg',html);
+            res.redirect('/');
+	}
+});
 
 app.listen('8081');
 console.log('Magic happens on port 8081');
