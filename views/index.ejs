@@ -4,88 +4,21 @@
 <head>
 	<title>Recipe Box</title>
 	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css"> <!-- load fontawesome -->
-   <link rel="stylesheet" href="./css/main.css" type="text/css" media="all"><!-- load custom css -->
-    <link href="css/bootstrap-cosmo.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="./css/main.css" type="text/css" media="all"><!-- load custom css -->
+    <link href="css/bootstrap-cosmo.min.css" rel="stylesheet"><!-- load boostrap theme -->
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
     <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
+    
+    <!--Boostrap File Input Plugin-->
+    <link rel="stylesheet" href="css/fileinput.min.css" media="all"  type="text/css" />
+    <script src="js/fileinput.min.js" type="text/javascript"></script>
+    
 	<style>
 		body 		{ }
 	</style>
-	<script>
-		
-			$('.foodpic').live('click', function()
-			{
-				var foodid = $(this).attr('id');
-				if($('#' + foodid + '.caption').is(':visible')) {
-						$('#' + foodid + '.caption').slideUp();
-				}
-				else
-				{
-					$('#' + foodid + '.caption').slideDown();
-				}
-			});
-			
-			$(window).load(function() {   
-  					$('#loader').hide();
-  					$('#recipes').show();
-  					$("#flashmessage").fadeOut(2000);
-
-			});
-		
-		$("#addrecipe").click(function(){
-		  			$('#recipes').hide();
-					$('#loader').show();
-		});
-		
-		$("[id*='delete']").live('click',function ()
-		{
-			var deleteindex = $(this).attr('id');
-			 deleteindex = deleteindex.substr(6,6);
-			$('#'+deleteindex).slideUp(1000);
-			$.ajax({
- 				 type: "POST",
- 				 url: "/delete?item=" + deleteindex,
-
-				}).done(function() {
- 				 		setTimeout(location.href = "/",5000);
-					});
-				
-		});
-		
-		$("[id*='listadd']").live('click',function ()
-		{
-			var addindex = $(this).attr('id');
-			 addindex =addindex.substr(7,7);
-			$.ajax({
- 				 type: "POST",
- 				 url: "/listadd?item=" + addindex,
-
-				}).done(function() {
- 				 		setTimeout(location.href = "/",1000);
-					});
-				
-		});
-		
-		$("[id*='listrm']").live('click',function ()
-		{
-			var deleteindex = $(this).attr('id');
-			deleteindex = deleteindex.substr(6,6);
-			$.ajax({
- 				 type: "POST",
- 				 url: "/listrm?item=" + deleteindex,
-
-				}).done(function() {
- 				 		setTimeout(location.href = "/",1000);
-						$('#grocerylist').modal('show');
-					});
-				
-		});
-		
-		$('#grocerylist').modal()
-
-	</script>
+	
 </head>
 <body>
 
@@ -112,9 +45,49 @@
 			</div>
 		</div>
 <div id="loader"><img src="images/loader.gif" style="margin-top:10px"></div>
+<div id="recipes">
 		<% include recipe.ejs %>
+</div>
+
 
 <!-- Modal -->
+<div class="modal fade addrecipedialog" id="addrecipe" tabindex="-1" role="dialog" aria-labelledby="addrecipe" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" id="addrecipe">Add A Recipe</h4>
+      </div>
+      <div class="modal-body">
+		<form id="addrecipe" action="/addrecipe" method="post">
+			<input type="text" class="form-control text-center" placeholder="Enter name of a recipe" name="name" id="recipe-name" >
+			<input id="recipe-image" type="file" class="file">
+			<div class="input-group">
+				<input type="text" class="form-control text-center" placeholder="Enter an ingredient" id="ingredient-input">
+				<span class="input-group-btn">
+						<input type='button' class="btn btn-primary btn-default" value='Add Ingredient' id='ingredient-add'/>
+				</span>
+			</div>
+			<ul id="ingredient-list"></ul>
+			<div class="input-group">
+				<input type="text" class="form-control text-center" placeholder="Enter a step for the directions" id="direction-input">
+				<span class="input-group-btn">
+						<input type='button' class="btn btn-primary btn-default" value='Add Step' id='direction-add'/>
+				</span>
+			</div>
+			<ul id="direction-list"></ul>
+			
+		</form>
+      </div>
+      <div class="modal-footer">
+      	<button class="btn btn-primary btn-default" id="add-recipe-form">Add Recipe</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>		
+
+<!-- Grocery List Modal -->
 <div class="modal fade" id="grocerylist" tabindex="-1" role="dialog" aria-labelledby="grocerylist" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -142,4 +115,142 @@
 
 
 </body>
+<script>
+
+		$(window).load(function() {   
+  					$('#loader').hide();
+  					$('#recipes').show();
+  					$("#flashmessage").fadeOut(2000);
+
+			});
+		
+		$("#addrecipe").click(function(){
+		  			$('#recipes').hide();
+					$('#loader').show();
+		});
+		
+	
+			$('.foodpic').on('click', function()
+			{
+				var foodid = $(this).attr('id');
+				if($('#' + foodid + '.caption').is(':visible')) {
+						$('#' + foodid + '.caption').slideUp();
+				}
+				else
+				{
+					$('#' + foodid + '.caption').slideDown();
+				}
+			});
+			
+
+		$("[id*='delete']").on('click',function ()
+		{
+			var deleteindex = $(this).attr('id');
+			 deleteindex = deleteindex.substr(6,6);
+			$('#'+deleteindex).slideUp(1000);
+			$.ajax({
+ 				 type: "POST",
+ 				 url: "/delete?item=" + deleteindex,
+
+				}).done(function() {
+ 				 		setTimeout(location.href = "/",5000);
+					});
+				
+		});
+		
+			
+			$("#recipe-image").fileinput(
+									{'showUpload':false,
+									'captionTemplate':'<div class="form-control file-caption {class}"><span class="file-caption-name"></span></div>',
+									'initialCaption':'TESTING123',
+									'initialPreview':false,
+									'previewClass':'recipe-image-preview',
+									'captionClass':'recipe-image-caption',
+									'mainClass':'recipe-image-input'});
+			var ingredientlist = "";
+			var directionlist = "";
+			$("#ingredient-add").click(function(){
+				if(updateFormList("#ingredient"))
+				{
+					ingredientlist += $("#ingredient-input").val() + "//";
+					$("#ingredient-input").val("");
+				}
+			});
+		
+		
+			$("#direction-add").click(function(){
+				if(updateFormList("#direction"))
+				{
+					directionlist += $("#direction-input").val() + "//";
+					$("#direction-input").val("");
+				}	
+			});
+			
+			$("#add-recipe-form").click(function(){
+				var newrecipe = { name : "", image: "", ingredients : "", directions : ""};
+				newrecipe.name = $("#recipe-name").val();
+				newrecipe.image = $("#recipe-image").val();
+				newrecipe.ingredients = ingredientlist;
+				newrecipe.directions = directionlist;
+				$.ajax({
+ 					type: "POST",
+ 				 	url: "/addrecipe",
+ 				 	data:newrecipe,
+					}).done(function() {
+ 				 		setTimeout(location.href = "/",1000);
+					});
+			});
+			
+			//Updates running list of directions/ingredients for Add Recipe form
+			function updateFormList(selector)
+			{
+				if($(selector + "-input").val() != "")
+				{
+					var text = $(selector + "-input").val();
+					var li = "<li>" + text + "</li>";
+				
+					$(selector + "-list").append(li);
+					return true;
+				}
+				else
+				{
+					return false;
+				}
+			}
+			
+		
+		$("[id*='listadd']").on('click',function ()
+		{
+			var addindex = $(this).attr('id');
+			 addindex =addindex.substr(7,7);
+			$.ajax({
+ 				 type: "POST",
+ 				 url: "/listadd?item=" + addindex,
+
+				}).done(function() {
+ 				 		setTimeout(location.href = "/",1000);
+					});
+				
+		});
+		
+		$("[id*='listrm']").on('click',function ()
+		{
+			var deleteindex = $(this).attr('id');
+			deleteindex = deleteindex.substr(6,6);
+			$.ajax({
+ 				 type: "POST",
+ 				 url: "/listrm?item=" + deleteindex,
+
+				}).done(function() {
+ 				 		setTimeout(location.href = "/",1000);
+						$('#grocerylist').modal('show');
+					});
+				
+		});
+		
+
+
+
+
+	</script>
 </html>
