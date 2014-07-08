@@ -50,7 +50,7 @@
 </div>
 
 
-<!-- Modal -->
+<!-- Add A Recipe Modal -->
 <div class="modal fade addrecipedialog" id="addrecipe" tabindex="-1" role="dialog" aria-labelledby="addrecipe" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -87,6 +87,27 @@
   </div>
 </div>		
 
+<!-- Recipe Details Modal -->
+<div class="modal fade recipedetails" id="recipedetails" tabindex="-1" role="dialog" aria-labelledby="recipedetails" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" id="recipe-details-title"></h4>
+      </div>
+      <div class="modal-body" id="recipe-details-body">
+		 
+      </div>
+      <div class="modal-footer">
+      	<button class="btn btn-primary modal-listadd" id="listadd" role="button">Add to List</button> 
+	 	<button class="btn btn-default modal-delete" id="delete" role="button">Delete</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>		
+
+
 <!-- Grocery List Modal -->
 <div class="modal fade" id="grocerylist" tabindex="-1" role="dialog" aria-labelledby="grocerylist" aria-hidden="true">
   <div class="modal-dialog">
@@ -113,11 +134,13 @@
   </div>
 </div>		
 
-
 </body>
 <script>
+var user= <%- JSON.stringify(user) %>;
 
-		$(window).load(function() {   
+
+
+ 		$(window).load(function() {   
   					$('#loader').hide();
   					$('#recipes').show();
   					$("#flashmessage").fadeOut(2000);
@@ -133,15 +156,33 @@
 			$('.foodpic').on('click', function()
 			{
 				var foodid = $(this).attr('id');
-				if($('#' + foodid + '.caption').is(':visible')) {
-						$('#' + foodid + '.caption').slideUp();
-				}
-				else
-				{
-					$('#' + foodid + '.caption').slideDown();
-				}
+				var ingredients = user.recipes[foodid].ingredients;
+				console.log(ingredients);
+				$('#recipe-details-title').text(user.recipes[foodid].name);
+				var detailbody = "<p><ul><h4>Ingredients</h4>";
+				detailbody += parseToHTML(ingredients);
+				detailbody += "</ul><p><ul><h4>Directions</h4>";
+				detailbody += parseToHTML(user.recipes[foodid].directions);
+				$('#recipe-details-body').html(detailbody);
+				$('.modal-listadd').attr("id","listadd" + foodid);
+				$('.modal-delete').attr("id","delete" + foodid);
+				$('#recipedetails').modal('show');
 			});
-			
+		
+		function parseToHTML(list)
+		{
+			var output = ""; 
+			list = list.split("//");
+			for(var i = 0;i<list.length;i++)
+			{
+				if(/\S/.test(list[i]))
+				{
+					console.log(list[i]);
+					output += "<li>" + list[i] + "</li>"
+				}
+			}
+			return output;
+		}
 
 		$("[id*='delete']").on('click',function ()
 		{
@@ -169,6 +210,26 @@
 									'mainClass':'recipe-image-input'});
 			var ingredientlist = "";
 			var directionlist = "";
+			var recipeimage = "";
+		
+			var fileInput = document.getElementById('recipe-image');
+			fileInput.addEventListener('change',function(e){
+				var file = fileInput.files[0];
+				var imageType = /image.*/;
+				if(file.type.match(imageType))
+				{
+					var reader = new FileReader()
+					reader.onload = function(e){
+						recipeimage = new Image();
+						recipeimage.src = reader.result;
+						//$("#ingredient-list").append(recipeimage);
+					}
+					reader.readAsDataURL(file);
+					 
+				}
+
+			});
+		
 			$("#ingredient-add").click(function(){
 				if(updateFormList("#ingredient"))
 				{
@@ -189,7 +250,9 @@
 			$("#add-recipe-form").click(function(){
 				var newrecipe = { name : "", image: "", ingredients : "", directions : ""};
 				newrecipe.name = $("#recipe-name").val();
-				newrecipe.image = $("#recipe-image").val();
+				//newrecipe.image = new Image();
+				newrecipe.image = recipeimage.src;
+				console.log(newrecipe.image);
 				newrecipe.ingredients = ingredientlist;
 				newrecipe.directions = directionlist;
 				$.ajax({
