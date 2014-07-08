@@ -14,29 +14,7 @@
 			<button class="btn btn-primary" id="listadd<%= i %>"role="button">Add to List</button> 
 	 			<button class="btn btn-default" id="delete<%= i %>" role="button">Delete</button>
 	 	</div> 
-		<div class="caption" id="<%= i %>" style="display:none">
-			<p>
-			<%  ingredientlist = user.recipes[i].ingredients.split("//") %>
-			<%  directionlist = user.recipes[i].directions.split("//") %>
-			<ul> <h4>Ingredients</h4>
-				<% for(var k=0; k<ingredientlist.length; k++) {%>
-						<%if(ingredientlist[k] != ""){ %>
-							<li> <%= ingredientlist[k] %></li>
-						<%}%>
-				<% } %>
-			</ul>
-	 		</p>
-	 		<p>
-	 		<ul><h4>Directions</h4>
-			<% for(var j=0; j<directionlist.length; j++) {%>
-					<%if(directionlist[j] != ""){ %>
-						<li> <%= directionlist[j] %></li>
-					<%}%>
-				<% } %>
-			</ul>
-	 		</p>
-	 		
-	 	</div> 
+		
 </div>
 </div>
 <% if((i + 1) % 4 == 0)  {%>
