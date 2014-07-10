@@ -1,9 +1,16 @@
 
 <% if(user == "empty") {%>
 	<a href="/login" class="btn btn-default"> Login</a>
+	<a href="/auth/google" class="btn btn-danger">Login with Google</a>
 	<a href="/signup" class="btn btn-default"> Signup</a>
 <% } else {%>
-	 <button class="btn btn-default"> <%= user.local.email %> </button>
+	 
+	 <button class="btn btn-default"> <%= user.google.email || user.local.email %> </button>
+	 <% if(!user.local.email){ %>
+	 		<a href="/connect/local" class="btn btn-default">Connect Local</a>
+	 <% } else if(!user.google.token){ %>
+			<a href="/connect/google" class="btn btn-danger">Connect Google</a>
+	 <% } %>
 	 <a href="/logout" class="btn btn-default">Logout</a>
 	
 	<button class="btn btn-default" data-toggle="modal" data-target=".addrecipedialog">Add Recipe</button>

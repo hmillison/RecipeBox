@@ -1,7 +1,6 @@
 // app/routes.js
 module.exports = function(app, passport) {
 
-	
 
 	// =====================================
 	// LOGIN ===============================
@@ -64,58 +63,48 @@ module.exports = function(app, passport) {
 	}));
 	
 
-	// Recipe api ---------------------------------------------------------------------
-	// get all todos
-	app.get('/api/recipe', function(req, res) {
+	// =====================================
+	// GOOGLE ROUTES =======================
+	// =====================================
+	// send to google to do the authentication
+	// profile gets us their basic information including their name
+	// email gets their emails
+    app.get('/auth/google', passport.authenticate('google', { scope : ['profile', 'email'] }));
 
-		// use mongoose to get all todos in the database
-		recipe.find(function(err, recipes) {
+    // the callback after google has authenticated the user
+    app.get('/oauth2callback',
+            passport.authenticate('google', {
+                    successRedirect : '/',
+                    failureRedirect : '/'
+            }));
+            
+// =============================================================================
+// AUTHORIZE (ALREADY LOGGED IN / CONNECTING OTHER SOCIAL ACCOUNT) =============
+// =============================================================================
 
-			// if there is an error retrieving, send the error. nothing after res.send(err) will execute
-			if (err)
-				res.send(err)
-
-			res.json(recipes); // return all todos in JSON format
+	// locally --------------------------------
+		app.get('/connect/local', function(req, res) {
+			res.render('connect-local.ejs', { message: req.flash('loginMessage') });
 		});
-	});
+		app.post('/connect/local', passport.authenticate('local-signup', {
+			successRedirect : '/profile', // redirect to the secure profile section
+			failureRedirect : '/connect/local', // redirect back to the signup page if there is an error
+			failureFlash : true // allow flash messages
+		}));
+		
+	// google ---------------------------------
 
-	// create todo and send back all todos after creation
-	app.post('/api/recipe', function(req, res) {
+		// send to google to do the authentication
+		app.get('/connect/google', passport.authorize('google', { scope : ['profile', 'email'] }));
 
-		// create a todo, information comes from AJAX request from Angular
-		recipe.create({
-			text : req.body.text,
-			done : false
-		}, function(err, recipes) {
-			if (err)
-				res.send(err);
+		// the callback after google has authorized the user
+		app.get('/connect/google/callback',
+			passport.authorize('google', {
+				successRedirect : '/profile',
+				failureRedirect : '/'
+			}));
 
-			// get and return all the todos after you create another
-			recipe.find(function(err, recipes) {
-				if (err)
-					res.send(err)
-				res.json(recipes);
-			});
-		});
 
-	});
-
-	// delete a todo
-	app.delete('/api/recipe/:recipe_id', function(req, res) {
-		recipe.remove({
-			_id : req.params.recipe_id
-		}, function(err, recipe) {
-			if (err)
-				res.send(err);
-
-			// get and return all the todos after you create another
-			recipe.find(function(err, recipes) {
-				if (err)
-					res.send(err)
-				res.json(recipes);
-			});
-		});
-	});
 };
 
 // route middleware to make sure a user is logged in
