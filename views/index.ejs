@@ -33,7 +33,7 @@
 
 		<div id="scrape-form" class="row">
 			<div class="col-sm-8 col-sm-offset-2 text-center">
-				<%- errormessage %>
+				<div id="msg"> <%- errormessage %> </div>
 				<form action="/" method="post" id="recipe-scrape">
 					<div class="form-group">
 						<input type="text" class="form-control input-lg text-center" placeholder="Enter the URL of a recipe to get started!" name="url" id="url" >
@@ -157,7 +157,6 @@ $('#recipes').hide();
 			{
 				var foodid = $(this).attr('id');
 				var ingredients = user.recipes[foodid].ingredients;
-				console.log(ingredients);
 				$('#recipe-details-title').text(user.recipes[foodid].name);
 				var detailbody = "<p><ul><h4>Ingredients</h4>";
 				detailbody += parseToHTML(ingredients);
@@ -192,11 +191,13 @@ $('#recipes').hide();
 			$.ajax({
  				 type: "POST",
  				 url: "/delete?item=" + deleteindex,
-
-				}).done(function() {
- 				 		setTimeout(location.href = "/",300);
-					});
-				
+				success: function(data) {
+						$('html, body').animate({ scrollTop: 0 }, 0);
+ 				 		$("#msg").html(data);
+ 				 		$("#flashmessage").fadeOut(1000);
+ 				 		setTimeout(location.href = "/",2000);
+					},
+				});
 		});
 		
 			
@@ -284,29 +285,37 @@ $('#recipes').hide();
 		
 		$("[id*='listadd']").on('click',function ()
 		{
+			$('#recipedetails').modal('hide');
 			var addindex = $(this).attr('id');
 			 addindex =addindex.substr(7,7);
 			$.ajax({
  				 type: "POST",
  				 url: "/listadd?item=" + addindex,
-
-				}).done(function() {
- 				 		setTimeout(location.href = "/",300);
-					});
-				
+				success: function(data) {
+						$('html, body').animate({ scrollTop: 0 }, 0);
+ 				 		$("#msg").html(data);
+ 				 		$("#flashmessage").fadeOut(1000);
+ 				 		setTimeout(location.href = "/",2000);
+					},
+				});
+			
 		});
 		
 		$("[id*='listrm']").on('click',function ()
 		{
+			$('#grocerylist').modal('hide');
 			var deleteindex = $(this).attr('id');
 			deleteindex = deleteindex.substr(6,6);
 			$.ajax({
  				 type: "POST",
  				 url: "/listrm?item=" + deleteindex,
-
-				}).done(function() {
- 				 		setTimeout(location.href = "/",300);
-					});
+				success: function(data) {
+						$('html, body').animate({ scrollTop: 0 }, 0);
+ 				 		//$("#msg").html(data);
+ 				 		$("#flashmessage").fadeOut(1000);
+ 				 		setTimeout(location.href = "/",2000);
+					},
+				});
 				
 		});
 		
