@@ -89,7 +89,7 @@ module.exports = {
 		
 		$('.directLeft').filter(function(){
 			var data = $(this);
-			var list = data.children().next().children().nextUntil('#lnkKitchenView');
+			var list = data.children().next().children();
 			var parts = [];
 	        directions = ""
 	        list.each(function(i,elem){

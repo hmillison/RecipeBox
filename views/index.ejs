@@ -7,10 +7,10 @@
     <link rel="stylesheet" href="./css/main.css" type="text/css" media="all"><!-- load custom css -->
     <link href="css/bootstrap-cosmo.min.css" rel="stylesheet"><!-- load boostrap theme -->
 
-        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
     <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
-    
+    <link rel="icon" type="image/png" href="/images/icon.png">
     <!--Boostrap File Input Plugin-->
     <link rel="stylesheet" href="css/fileinput.min.css" media="all"  type="text/css" />
     <script src="js/fileinput.min.js" type="text/javascript"></script>
@@ -34,7 +34,7 @@
 		<div id="scrape-form" class="row">
 			<div class="col-sm-8 col-sm-offset-2 text-center">
 				<%- errormessage %>
-				<form action="/" method="post">
+				<form action="/" method="post" id="recipe-scrape">
 					<div class="form-group">
 						<input type="text" class="form-control input-lg text-center" placeholder="Enter the URL of a recipe to get started!" name="url" id="url" >
 					</div>
@@ -120,7 +120,7 @@
 	 		<% if(user != "empty" && user.list.length > 0) {%>
 	 			<ul>
 	 				<% for(var i = 0;i<(user.list.length);i++) { %>
-	 			 		<li class="glist"> <%= user.list[i].name %> 	<button id="listrm<%= i %>" class="btn btn-default">Delete</a></li>
+	 			 		<li class="glist"> <%= user.list[i].name %> 	<button id="listrm<%= i %>" class="btn btn-default">Remove from List</a></li>
 	 				<% }%>
 	 			</ul>
 	 		<% }%>
@@ -137,7 +137,7 @@
 </body>
 <script>
 var user= <%- JSON.stringify(user) %>;
-
+$('#recipes').hide();
 
 
  		$(window).load(function() {   
@@ -147,7 +147,7 @@ var user= <%- JSON.stringify(user) %>;
 
 			});
 		
-		$("#addrecipe").click(function(){
+		$("#recipe-scrape").submit(function(){
 		  			$('#recipes').hide();
 					$('#loader').show();
 		});
@@ -194,7 +194,7 @@ var user= <%- JSON.stringify(user) %>;
  				 url: "/delete?item=" + deleteindex,
 
 				}).done(function() {
- 				 		setTimeout(location.href = "/",5000);
+ 				 		setTimeout(location.href = "/",300);
 					});
 				
 		});
@@ -291,7 +291,7 @@ var user= <%- JSON.stringify(user) %>;
  				 url: "/listadd?item=" + addindex,
 
 				}).done(function() {
- 				 		setTimeout(location.href = "/",1000);
+ 				 		setTimeout(location.href = "/",300);
 					});
 				
 		});
@@ -305,8 +305,7 @@ var user= <%- JSON.stringify(user) %>;
  				 url: "/listrm?item=" + deleteindex,
 
 				}).done(function() {
- 				 		setTimeout(location.href = "/",1000);
-						$('#grocerylist').modal('show');
+ 				 		setTimeout(location.href = "/",300);
 					});
 				
 		});
