@@ -38,9 +38,19 @@ padding-top:30px;
 	border-color:#007fff !important;
 }
 
+#recipes
+{
+margin-right:5px;
+}
+
+.foodpic{
+	cursor:pointer;
+}
+
 #addrecipe > *{
 margin-bottom:5px;
 }
+
 
 .recipe-image-caption{
 	overflow:hidden;
