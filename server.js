@@ -211,19 +211,17 @@ function compare(a,b) {
 // =====================================
 app.post('/delete', function(req, res){
 	var deleteid = req.query.item;
-	var temp = [];
-	temp = req.user.recipes;
-	temp.splice(deleteid,1);
-	req.user.recipes = temp;
-	req.user.save(function(err) {
+	var user = req.user;
+	user.recipes.splice(deleteid,1);
+	user.save(function(err) {
              	 if (err)
                 	throw err;
                 });      
 	//res.render('index.ejs',{user:req.user,errormessage:""});
 	var html = "<div class='alert alert-success' id='flashmessage'>Recipe Deleted Succesfully</div>";
-
-	req.flash('msg',html);
-	res.redirect('/');
+	res.send(html);
+	//req.flash('msg',html);
+	//res.redirect('/');
 });
 
 // =====================================
@@ -238,13 +236,14 @@ app.post('/listadd', function(req, res){
          		if (err)
               	  throw err;
                 });
+     	var html = "<div class='alert alert-success' id='flashmessage'>Recipe added to Grocery List</div>";
     }
     else
     {
-    	var html = "<div class='alert alert-danger' id='flashmessage'>Recipe is already in Grocery List</div>";
+    	 html = "<div class='alert alert-danger' id='flashmessage'>Recipe is already in Grocery List</div>";
     }
 	//res.render('index.ejs',{user:req.user,errormessage:""});
-	res.redirect('/');
+	res.send(html);
 
 });
 
@@ -275,7 +274,8 @@ app.post('/listrm', function(req, res){
                 	throw err;
                 });  
 	//res.render('index.ejs',{user:req.user,errormessage:""});
-	res.redirect('/');
+	var html = "<div class='alert alert-danger' id='flashmessage'>Recipe removed from Grocery List</div>";
+	res.send(html);
 
 });
 
