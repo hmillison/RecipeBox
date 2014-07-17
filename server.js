@@ -35,8 +35,10 @@ app.use(bodyParser({limit:'50mb'}));
 	app.use(flash()); // use connect-flash for flash messages stored in session
 	// routes ==================================================
 	require('./app/routes.js')(app, passport); // load our routes and pass in our app and fully configured passport
-
-
+	require('./config/email.js')(app, email);
+	//email server
+	//var server = require('./config/email.js');
+	//var server = emailserver.server;
 
 
 // =====================================
@@ -100,7 +102,7 @@ app.get('/scrape', function(req, res){
 		request(url, function(error, response, html){ 
 		if(!error){
 		var $ = cheerio.load(html);
-		var newrecipe = { name : "", image: "", ingredients : "", directions : ""};
+		var newrecipe = { name : "", image: "", ingredients : "", directions : "", tags : []};
 		//determine which method needs to be used to scrape
 		if(urltype == 0)
 		{
@@ -128,7 +130,7 @@ app.get('/scrape', function(req, res){
 			{
 				newrecipe.image = "/images/placeholder.png";
 			}
-			req.user.recipes.push(newrecipe);
+			req.user.data.recipes.push(newrecipe);
 			
 			req.user.save(function(err) {
                     if (err){
@@ -157,19 +159,7 @@ app.get('/scrape', function(req, res){
 	}
 });
 
-//helper function to determine if the url is supported by scraping 
-function inArray(url, valid)
-{
-	var output = -1;
-	for(var i = 0;i<valid.length;i++)
-	{
-		if(url.indexOf(valid[i]) != -1)
-		{
-			output = i;
-		}	
-	}
-	return output;
-}
+
 
 // =====================================
 // Sorts Recipes Alphabetically=========
@@ -178,9 +168,9 @@ app.get('/sort', function(req, res){
 	if(req.user)
 	{
 		var temp = [];
-		temp = req.user.recipes;
+		temp = req.user.data.recipes;
 		temp.sort(compare);
-		req.user.recipes = temp;
+		req.user.data.recipes = temp;
 		req.user.save(function(err) {
         	 if (err)
             	    throw err;
@@ -197,14 +187,6 @@ app.get('/sort', function(req, res){
 
 });
 
-//Helper function for sort
-function compare(a,b) {
-  if (a.name < b.name)
-     return -1;
-  if (a.name > b.name)
-    return 1;
-  return 0;
-}
 
 // =====================================
 // Deletes Recipe from Collection=======
@@ -212,7 +194,7 @@ function compare(a,b) {
 app.post('/delete', function(req, res){
 	var deleteid = req.query.item;
 	var user = req.user;
-	user.recipes.splice(deleteid,1);
+	user.data.recipes.splice(deleteid,1);
 	user.save(function(err) {
              	 if (err)
                 	throw err;
@@ -229,9 +211,9 @@ app.post('/delete', function(req, res){
 // =====================================
 app.post('/listadd', function(req, res){
 	var addid = req.query.item;
-	if(inGroceryList(req.user.recipes[addid],req.user.list) == -1)
+	if(inGroceryList(req.user.data.recipes[addid],req.user.data.list) == -1)
 	{
-		req.user.list.push(req.user.recipes[addid]);
+		req.user.data.list.push(req.user.data.recipes[addid]);
 		req.user.save(function(err) {
          		if (err)
               	  throw err;
@@ -247,18 +229,6 @@ app.post('/listadd', function(req, res){
 
 });
 
-function inGroceryList(recipe, list)
-{
-	for(var i = 0;i<list.length;i++)
-	{
-		if(recipe.name == list[i].name && recipe.image == list[i].image 
-			&& recipe.ingredients == list[i].ingredients && recipe.directions == list[i].directions)
-		{
-			return i;
-		}
-	}
-	return -1;
-}
 
 // =====================================
 // Remove Recipe from Grocery List======
@@ -266,9 +236,9 @@ function inGroceryList(recipe, list)
 app.post('/listrm', function(req, res){
 	var deleteid = req.query.item;
 	var temp = [];
-	temp = req.user.list;
+	temp = req.user.data.list;
 	temp.splice(deleteid,1);
-	req.user.list = temp;
+	req.user.data.list = temp;
 	req.user.save(function(err) {
              	 if (err)
                 	throw err;
@@ -281,74 +251,6 @@ app.post('/listrm', function(req, res){
 
 
 
-// =====================================
-// Sends Grocery List to User Email=====
-// =====================================
-
-//email server config
-var server  = email.server.connect({
-   user:    "hmillison@gmail.com", 
-   password:"",
-   host:    "smtp.gmail.com", 
-   ssl:     true
-});
-
-app.get('/listsend', function(req, res){
-var sendto = req.user.local.email;
-var content = "<body>";
-var list = req.user.list;
-var shoppinglist;
-var output = "helloworld";
-for(var i = 0;i<list.length;i++)
-{
-	content += "<ul> " + list[i].name;
-	var shoppinglist = list[i].ingredients.split("//");
-
-	for(var k = 0;k<shoppinglist.length;k++)
-	{
-		if(shoppinglist[k] != "")
-		{
-			content += "<li>" + shoppinglist[k] + "</li>";
-		}
-	}
-	content += "</ul>";
-}
-
-content += "</body>";
-// send the message and get a callback with an error or details of the message that was sent
-var message ={
-   text:    "", 
-   from:    "Recipe Box <recipebox@hmillie.com>", 
-   to:      sendto,
-   subject: "Your Recipe Box Shopping List - " + moment().format('MM/DD'),
-   attachment:
-     [
-      {data:content, alternative:true}
-   ]
-};
-
-server.send(message, function(err, message) { 
-							if(err){
-								output = "<div class='alert alert-danger' id='flashmessage'>Error Sending Email!</div>";
-								req.flash('msg',output);
-								res.redirect('/');
-
-							}
-							else
-							{
-							 output = "<div class='alert alert-success' id='flashmessage'>Email Sent!</div>";
-							req.user.list = [];
-							req.user.save(function(err) {
-             	 						if (err)
-                						throw err;
-                						});
-                				req.flash('msg',output);
-								res.redirect('/')
-							}
-						
-						});
-
-});
 
 // =====================================
 // Add a Recipe from User Input=========
@@ -369,7 +271,7 @@ app.post('/addrecipe', function(req, res){
 		newrecipe.image = "";
 		newrecipe.ingredients = req.body.ingredients;
 		newrecipe.directions = req.body.directions;
-		req.user.recipes.push(newrecipe);
+		req.user.data.recipes.push(newrecipe);
 			
 		req.user.save(function(err) {
                if (err){
@@ -392,6 +294,47 @@ app.post('/addrecipe', function(req, res){
             res.redirect('/');
 	}
 });
+
+
+// =====================================
+// Functions ======
+// =====================================
+
+//helper function to determine if the url is supported by scraping 
+function inArray(url, valid)
+{
+	var output = -1;
+	for(var i = 0;i<valid.length;i++)
+	{
+		if(url.indexOf(valid[i]) != -1)
+		{
+			output = i;
+		}	
+	}
+	return output;
+}
+
+//Helper function for sort
+function compare(a,b) {
+  if (a.name < b.name)
+     return -1;
+  if (a.name > b.name)
+    return 1;
+  return 0;
+}
+
+function inGroceryList(recipe, list)
+{
+	for(var i = 0;i<list.length;i++)
+	{
+		if(recipe.name == list[i].name && recipe.image == list[i].image 
+			&& recipe.ingredients == list[i].ingredients && recipe.directions == list[i].directions)
+		{
+			return i;
+		}
+	}
+	return -1;
+}
 
 app.listen('8081');
 console.log('Magic happens on port 8081');
