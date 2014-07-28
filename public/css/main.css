@@ -1,56 +1,163 @@
-nav > *{
-margin-left:5px;
-margin-top:3px;
+@import url(http://fonts.googleapis.com/css?family=Lato);
+@import url(http://fonts.googleapis.com/css?family=Pacifico);
+
+/*===========================================================
+HTML Tags
+===========================================================*/
+body{
+background-color: #ddd;
+font-family: 'Lato', sans-serif;
+
 }
 
 h4{
-text-align:center;
+	text-align:center;
 }
 
-#userinfo{
-margin-left:20px;
-margin-top:20px;
-color:#fff;
+/*===========================================================
+Bootstrap Overrides
+===========================================================*/
+#headline{
+	font-family: 'Pacifico', sans-serif;
+	font-size:60px;
 }
 
-#bookmarklet
+.btn
 {
-float:right;
-margin-right:5px;
-}
-
-
-.glist
-{
-margin-bottom:10px;
-}
-
-#loader{
-text-align:center;
-}
-
-#flashmessage{
-padding-top:30px;
+	border-radius:5px;
+	margin-bottom: 5px;
 }
 
 .btn-primary:hover, .btn-primary:focus, .btn-primary:active, .btn-primary.active, .open>.dropdown-toggle.btn-primary{
-	background-color:#007fff !important; 
+	background-color:#007fff !important;
 	border-color:#007fff !important;
 }
 
-#recipes
+.thumbnail{
+	border-radius:10px;
+	border:none;
+	-webkit-box-shadow: 0 0 4px rgba(0, 0, 0, 0.2), inset 0 0 50px rgba(0, 0, 0, 0.1);
+	-moz-box-shadow: 0 0 4px rgba(0, 0, 0, 0.2), inset 0 0 50px rgba(0, 0, 0, 0.1);
+	box-shadow: 0 0 5px rgba(0, 0, 0, 0.2), inset 0 0 50px rgba(0, 0, 0, 0.1);
+}
+
+.thumbnail>img
 {
-margin-right:5px;
+	width: auto;
+	max-width: 100%;
+}
+
+@media (max-width: 768px){
+
+	.thumbnail{
+	width:60%;
+	margin: auto;
+	margin-bottom: 10px;
+	}
+
+}
+
+/*===========================================================
+Form/Recipe Display
+===========================================================*/
+#msg{
+	margin-top:10px;
+	height:80px;
+}
+
+#loader{
+	text-align:center;
+}
+
+#flashmessage{
+	padding-top:30px;
 }
 
 .foodpic{
 	cursor:pointer;
 }
 
-#addrecipe > *{
-margin-bottom:5px;
+#recipe-buttons{
+	text-align:center;
 }
 
+#update-tag{
+	margin-bottom:5px;
+	text-align:center;
+}
+
+ul.dropdown-menu-form {
+    padding: 5px 10px 0;
+    overflow-y: visible;
+}
+
+input[type="checkbox"] {
+  display:none;
+}
+
+
+input[type="checkbox"] + span:before {
+  font-family: 'FontAwesome';
+  padding-right: 3px;
+  font-size: 20px;
+}
+
+input[type="checkbox"] + span:before {
+  content: "\f096"; /* check-empty */
+}
+
+input[type="checkbox"]:checked + span:before {
+  content: "\f046"; /* check */
+}
+
+@media (min-width: 768px) and (max-width: 1200px){
+
+#recipe-buttons .btn{
+	padding: 5px 10px;
+	font-size: 13px;
+	line-height: 1.5;
+	margin-bottom:5px;
+}
+
+}
+
+
+/*===========================================================
+Navigation Bar
+===========================================================*/
+nav > *{
+	margin-top:5px;
+	margin-left:5px;
+}
+
+
+#userinfo{
+	margin-left:20px;
+	margin-top:20px;
+	color:#fff;
+}
+
+#bookmarklet
+{
+	float:right;
+	margin-right:5px;
+}
+
+/*===========================================================
+Grocery List Modal
+===========================================================*/
+.glist
+{
+	margin-bottom:10px;
+}
+
+/*===========================================================
+Manually Add Recipe Modal
+===========================================================*/
+
+#addrecipe > *{
+	margin-bottom:5px;
+}
 
 .recipe-image-caption{
 	overflow:hidden;
@@ -60,7 +167,7 @@ margin-bottom:5px;
 .file-caption-name
 {
 	font-size:10px !important;
-	max-width:200px;
+	max-width:0px;
 	float:left;
 }
 
@@ -71,6 +178,9 @@ margin-bottom:5px;
 	max-width:558px;
 }
 
+/*===========================================================
+Recipe Details Modal
+===========================================================*/
 .modal-listadd, .modal-delete{
 	float:left;
 }

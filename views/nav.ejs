@@ -4,20 +4,60 @@
 	<a href="/auth/google" class="btn btn-danger">Login with Google</a>
 	<a href="/signup" class="btn btn-default"> Signup</a>
 <% } else {%>
-	 
+
 	 <button class="btn btn-default"> <%= user.google.email || user.local.email %> </button>
-	 <% if(!user.local.email){ %>
+
+	 <a href="/logout" class="btn btn-default">Logout</a>
+	 <!-- <% if(!user.local.email){ %>
 	 		<a href="/connect/local" class="btn btn-default">Connect Local</a>
 	 <% } else if(!user.google.token){ %>
 			<a href="/connect/google" class="btn btn-danger">Connect Google</a>
-	 <% } %>
-	 <a href="/logout" class="btn btn-default">Logout</a>
-	
+	 <% } %> -->
+
 	<button class="btn btn-default" data-toggle="modal" data-target=".addrecipedialog">Add Recipe</button>
-	 <% if(user.list.length > 0) {%>
+	 <% if(user.data.list.length > 0) {%>
 	 	<button class="btn btn-primary btn-default" id="managegrocery" data-toggle="modal" data-target="#grocerylist">
 				Manage Grocery List
 		</button>
 	<% } %>
-	 <a href="javascript:<html><body onload='$('#scrape').submit()'><form method='post' action='http://localhost:8081/scrape' id='scrape'><input type='hidden' name='url' id='url' value='document.URL'></form></body></html>;" class="btn btn-default" id="bookmarklet">Drag me to your bookmarks to grab recipes as you browse</a>
+	<div class="btn-group">
+
+	<button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" id="tagbutton-<%= i %>">
+		View <span class="caret"></span>
+	</button>
+	<ul class="dropdown-menu dropdown-menu-form" role="menu" id="viewmenu">
+				<form action="" method="post" id="view">
+					<li>
+						<label>
+							<input type="checkbox" name="all" id="all" checked="on">
+							<span></span>
+							All
+						</label>
+					<% for(var k=0;k<user.data.tags.length;k++) {%>
+				<li>
+					<label>
+							<input type="checkbox" name="tag-<%= k %>" id="tag-<%= k %>" value="<%= user.data.tags[k] %>" >
+					<span></span>
+					<%= user.data.tags[k] %>
+				</label>
+			</li>
+			<% } %>
+					<li class="divider"></li>
+					<li>
+						<div id="update-tag">
+							<input type="submit" class="btn btn-primary btn-sm" value="Show Recipes">
+						</div>
+					</li>
+							</form>
+			</ul>
+</div>
+	<!-- <a href="javascript:<html><body onload='$('#scrape').submit()'><form method='post' action='http://localhost:8081/scrape' id='scrape'><input type='hidden' name='url' id='url' value='document.URL'></form></body></html>;" class="btn btn-default" id="bookmarklet">Drag me to your bookmarks to grab recipes as you browse</a> -->
 <% }%>
+<button type="button"
+		class="btn btn-default btn-default popover-help"
+		style="float:right"
+		data-toggle="popover" title="About"
+		data-placement="left"
+		data-content="Recipe Box is a web app created by Henry Millison for the purpose of saving and managing your favorite recipes. How do you use it? Either enter a url of your favorite recipe in the box below or use the Add Recipe button to the right to manually add a recipe">
+		About
+</button>
