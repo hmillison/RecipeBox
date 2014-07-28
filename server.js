@@ -17,7 +17,7 @@ var moment = require('moment');
 app.use(bodyParser({limit:'50mb'}));
 
 // configuration ===========================================
-		
+
 	// config files
 	var db = require('./config/db');
 	var port = process.env.PORT || 8080; // set our port
@@ -35,7 +35,7 @@ app.use(bodyParser({limit:'50mb'}));
 	app.use(flash()); // use connect-flash for flash messages stored in session
 	// routes ==================================================
 	require('./app/routes.js')(app, passport); // load our routes and pass in our app and fully configured passport
-	require('./config/email.js')(app, email);
+	require('./config/email.js')(app, email, moment);
 	//email server
 	//var server = require('./config/email.js');
 	//var server = emailserver.server;
@@ -44,41 +44,41 @@ app.use(bodyParser({limit:'50mb'}));
 // =====================================
 // HOME PAGE (with login links) ========
 // =====================================
-	app.get('/', function(req, res) 
+	app.get('/', function(req, res)
 	{
 		var output = "empty";
-		if (req.user) 
+		if (req.user)
 		{
 			output = req.user;
-		}	
+		}
 		 var message = req.flash('msg');
-	 
+
 	res.render('index.ejs',{user:output,errormessage:message});
 });
-	
 
-var posturl = ""
+
 // Receives posted form and sends URL to scraper
 app.post('/', function(req, res){
-  posturl = req.body.url;
- if (req.user) {
-	 res.redirect('/scrape');
-} else {
-    res.redirect('/login');
-}
- 
+	res.redirect('/');
+
 });
 
 
 //=====web scraper for Food Network recipes===
-app.get('/scrape', function(req, res){
+app.post('/scrape', function(req, res){
+	url = req.body.url;
+	if (req.user == null) {
+			res.redirect('/login');
+	}
+else {
+
+
 	var validurl = [
 						"foodnetwork.com/recipes/",
 						"allrecipes.com/",
 						"food.com/recipe/",
 						"bonappetit.com/recipe/"
 						];
-	url = posturl;
 	var urltype = inArray(url,validurl);
 	//Appends http:// to urls to ensure proper scraping
 	if(url.substr(0,3) == "www")
@@ -99,7 +99,7 @@ app.get('/scrape', function(req, res){
 	}
 	else
 	{
-		request(url, function(error, response, html){ 
+		request(url, function(error, response, html){
 		if(!error){
 		var $ = cheerio.load(html);
 		var newrecipe = { name : "", image: "", ingredients : "", directions : "", tags : []};
@@ -121,7 +121,7 @@ app.get('/scrape', function(req, res){
 		{
 			newrecipe = scrape.bonappetit(url, $);
 		}
-		
+
 		//check if the recipe was created correctly
 		if(newrecipe != null && (newrecipe.name != "" || newrecipe.ingredients != "" || newrecipe.directions != ""))
 		{
@@ -131,7 +131,7 @@ app.get('/scrape', function(req, res){
 				newrecipe.image = "/images/placeholder.png";
 			}
 			req.user.data.recipes.push(newrecipe);
-			
+
 			req.user.save(function(err) {
                     if (err){
                         throw err;
@@ -140,11 +140,11 @@ app.get('/scrape', function(req, res){
                         res.redirect('/');
                     }
                     else{
-                      
+
 						res.redirect('/sort');
                     }
                 });
-         
+
         }
         else
         {
@@ -152,11 +152,12 @@ app.get('/scrape', function(req, res){
 			req.flash('msg',html);
 			res.redirect('/');
         }
-       
+
 		}
 	})
-	
+
 	}
+}
 });
 
 
@@ -174,7 +175,7 @@ app.get('/sort', function(req, res){
 		req.user.save(function(err) {
         	 if (err)
             	    throw err;
-                	}); 
+                	});
 
 		var html = "<div class='alert alert-success' id='flashmessage'>New Recipe Added!</div>";
 		res.render('index.ejs',{user:req.user,errormessage:html});
@@ -198,7 +199,7 @@ app.post('/delete', function(req, res){
 	user.save(function(err) {
              	 if (err)
                 	throw err;
-                });      
+                });
 	//res.render('index.ejs',{user:req.user,errormessage:""});
 	var html = "<div class='alert alert-success' id='flashmessage'>Recipe Deleted Succesfully</div>";
 	res.send(html);
@@ -242,7 +243,7 @@ app.post('/listrm', function(req, res){
 	req.user.save(function(err) {
              	 if (err)
                 	throw err;
-                });  
+                });
 	//res.render('index.ejs',{user:req.user,errormessage:""});
 	var html = "<div class='alert alert-danger' id='flashmessage'>Recipe removed from Grocery List</div>";
 	res.send(html);
@@ -257,7 +258,8 @@ app.post('/listrm', function(req, res){
 // =====================================
 app.post('/addrecipe', function(req, res){
 	var html = "";
-	var newrecipe = { name : "", image: "", ingredients : "", directions : ""};
+	console.log(req.files);
+	/*var newrecipe = { name : "", image: "", ingredients : "", directions : ""};
 	//check if the recipe was added correctly
 	if(req.body != null && (req.body.name != "" || req.body.ingredients != "" || req.body.directions != ""))
 	{
@@ -267,12 +269,12 @@ app.post('/addrecipe', function(req, res){
   			var newPath = "/uploads/" + data;
   			fs.writeFile(newPath, data, function (err) {
  		 });
-		});*/
+		});
 		newrecipe.image = "";
 		newrecipe.ingredients = req.body.ingredients;
 		newrecipe.directions = req.body.directions;
 		req.user.data.recipes.push(newrecipe);
-			
+
 		req.user.save(function(err) {
                if (err){
                   throw err;
@@ -281,26 +283,62 @@ app.post('/addrecipe', function(req, res){
                      res.redirect('/');
                     }
                     else{
-                    req.flash('msg',html);     
+                    req.flash('msg',html);
 					res.redirect('/sort');
                     }
                 });
-         
+
 	}
 	else
 	{
 		     html = "<div class='alert alert-danger' id='flashmessage'>Error Adding Recipe</div>";
 			req.flash('msg',html);
             res.redirect('/');
-	}
+	}*/
 });
 
+// =====================================
+// Update List of Tags for Recipe ======
+// =====================================
+app.post('/updatetags', function(req, res){
+	var html = "";
+	var recipeid = req.query.item;
+	req.user.data.recipes[recipeid].tags = [];
+	//doc.markModified(req.user);
+	for(var index in req.body)
+	{
+		if(index == "newtag" && req.body[index].length > 0)
+		{
+			req.user.data.recipes[recipeid].tags.push(req.body[index]);
+			req.user.data.tags.push(req.body[index]);
+		}
+		else if(index != "newtag")
+		{
+			console.log("tag added:" + req.body[index]);
+			req.user.data.recipes[recipeid].tags.push(req.body[index]);
+		}
+	}
+	console.log(req.user.data.recipes[recipeid].tags);
+	req.user.markModified('data');
+	req.user.save(function(err) {
+               if (err){
+                  throw err;
+                    html = "<div class='alert alert-danger' id='flashmessage'>Error Adding Tags</div>";
+					req.flash('msg',html);
+                     res.redirect('/');
+                    }
+                    else{
+                    req.flash('msg',html);
+					res.redirect('/');
+                    }
+                });
+});
 
 // =====================================
 // Functions ======
 // =====================================
 
-//helper function to determine if the url is supported by scraping 
+//helper function to determine if the url is supported by scraping
 function inArray(url, valid)
 {
 	var output = -1;
@@ -309,7 +347,7 @@ function inArray(url, valid)
 		if(url.indexOf(valid[i]) != -1)
 		{
 			output = i;
-		}	
+		}
 	}
 	return output;
 }
@@ -327,7 +365,7 @@ function inGroceryList(recipe, list)
 {
 	for(var i = 0;i<list.length;i++)
 	{
-		if(recipe.name == list[i].name && recipe.image == list[i].image 
+		if(recipe.name == list[i].name && recipe.image == list[i].image
 			&& recipe.ingredients == list[i].ingredients && recipe.directions == list[i].directions)
 		{
 			return i;
