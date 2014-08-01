@@ -34,12 +34,28 @@
 		<div id="scrape-form" class="row">
 			<div class="col-sm-8 col-sm-offset-2 text-center">
 				<div id="msg"> <%- errormessage %> </div>
+				<div class="recipe-tab-container">
+						<div class="tab active" id=recipe-search-tab>
+								Search
+						</div>
+						<div class="tab" id="recipe-scrape-tab">
+								Enter URL
+						</div>
+				</div>
 				<form action="/scrape" method="post" id="recipe-scrape">
 					<div class="form-group">
 						<input type="text" class="form-control input-lg text-center" placeholder="Enter the URL of a recipe to get started!" name="url" id="url" >
 					</div>
 
 					<button type="submit" id="addrecipe" class="btn btn-primary btn-lg" >Add</button>
+				</form>
+				<form id="recipe-search">
+					<div class="form-group">
+						<input type="text" class="form-control input-lg text-center" placeholder="Enter the name of a recipe to get started!" name="keyword" id="keyword" >
+					</div>
+
+					<button type="submit" id="addrecipe" class="btn btn-primary btn-lg" >Add</button>
+				</form>
 				</form>
 
 			</div>
@@ -139,12 +155,25 @@
 <script>
 var user= <%- JSON.stringify(user) %>;
 $('#recipes').hide();
+$('#recipe-scrape').hide();
 
+		$(document).ready(function(){
+
+		});
 
  		$(window).load(function() {
   					$('#loader').hide();
   					$('#recipes').show();
   					$("#flashmessage").fadeOut(2000);
+
+						$('.thumbnail').each(function(index){
+								var image = $(this).find('img');
+								var image_height = image[0].clientHeight;
+								if(image[0].clientHeight < 245){
+									var margin = 255 - image_height
+									image.css({'margin-bottom' : margin+'px'})
+								}
+					})
 
 			});
 
@@ -351,6 +380,38 @@ $('#recipes').hide();
 		$(".popover-help").popover({
 			  trigger: 'focus'
 		});
+
+		$(".tab").click(function(){
+			$(".tab").removeClass("active");
+			$(this).addClass("active");
+			var id = $(this).attr('id');
+			if(id == 'recipe-scrape-tab'){
+				$('#recipe-scrape').show();
+				$('#recipe-search').hide();
+			}
+			else{
+				$('#recipe-scrape').hide();
+				$('#recipe-search').show();
+			}
+
+		});
+
+		$('#recipe-search').submit(function(e){
+			e.preventDefault();
+			var data = $('#keyword').val();
+			$.ajax({
+						type: "POST",
+						data: {
+								keyword: data
+						},
+						url: "/search",
+						success: function(data) {
+								console.log(data);
+						}
+				});
+		});
+
+
 
 
 

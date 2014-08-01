@@ -45,6 +45,11 @@ Bootstrap Overrides
 {
 	width: auto;
 	max-width: 100%;
+	max-height:245px;
+}
+
+.thumbnail h4{
+	height:60px;
 }
 
 @media (max-width: 768px){
@@ -67,6 +72,33 @@ Form/Recipe Display
 
 #loader{
 	text-align:center;
+}
+
+.recipe-tab-container{
+vertical-align: bottom;
+font-size: 0;
+margin-top: 10px;
+z-index: 200;
+margin:auto;
+text-align: center;
+}
+
+.recipe-tab-container .tab{
+	display: inline-block;
+	font-weight: 400;
+	font-size: 15px;
+	line-height: 100%;
+	padding: 10px;
+	border-radius: 5px 5px 0 0;
+	text-align: center;
+	background-color: #fff;
+	margin-right:5px;
+	cursor:pointer;
+}
+
+.tab.active{
+	font-weight:700;
+	font-size:20px;
 }
 
 #flashmessage{
