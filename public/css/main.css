@@ -216,3 +216,12 @@ Recipe Details Modal
 .modal-listadd, .modal-delete{
 	float:left;
 }
+
+/*===========================================================
+Recipe Search Modal
+===========================================================*/
+
+.thumbnail .caption .search-name{
+text-align: center;
+font-size: 12px;
+}

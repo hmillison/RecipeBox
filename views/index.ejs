@@ -124,6 +124,25 @@
   </div>
 </div>
 
+<!-- Recipe Details Modal -->
+<div class="modal fade recipesearch" id="recipesearch" tabindex="-1" role="dialog" aria-labelledby="recipesearch" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+				<h4 class="modal-title" id="recipe-search-title"></h4>
+			</div>
+			<div class="modal-body" id="recipe-search-body">
+
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+
 
 <!-- Grocery List Modal -->
 <div class="modal fade" id="grocerylist" tabindex="-1" role="dialog" aria-labelledby="grocerylist" aria-hidden="true">
@@ -396,21 +415,57 @@ $('#recipe-scrape').hide();
 
 		});
 
+
+
 		$('#recipe-search').submit(function(e){
 			e.preventDefault();
-			var data = $('#keyword').val();
+			var searchkey = $('#keyword').val();
 			$.ajax({
 						type: "POST",
 						data: {
-								keyword: data
+								keyword: searchkey
 						},
 						url: "/search",
 						success: function(data) {
-								console.log(data);
-						}
-				});
+
+								var searchresult = JSON.parse(data);
+								$('#recipe-search-title').text("Search Results for: " + searchkey)
+								console.log(searchresult.matches);
+								$('#recipe-search-body').html(parseMatches(searchresult.matches));
+								$('#recipe-search-body').append(searchresult.attribution.html);
+								$('#recipesearch').modal('show');
+
+					}
+				})
 		});
 
+	function parseMatches(list)
+	{
+		var output = "";
+		for(var i = 0;i<list.length;i++)
+		{
+				if(i % 5 == 0)
+				{
+					output += "<div class='row'>";
+					output += "<div class='col-md-2 col-md-offset-1'>";
+				}
+				else
+				{
+					output += "<div class='col-md-2'>";
+				}
+
+				output +=	"<div class='thumbnail'>";
+				if(typeof(list[i].imageUrlsBySize) != 'undefined'){
+					output +=	"<img src='"+ list[i].imageUrlsBySize[90] + "'>";
+				}
+				output += "<div class='caption'><div class='search-name'>" + list[i].recipeName + "</div></div></div></div>";
+				if((i+1) % 5 == 0)
+				{
+					output += "</div>";
+				}
+		}
+		return output;
+	}
 
 
 
