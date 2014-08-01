@@ -14,6 +14,7 @@ var session      = require('express-session');
 var email   = require("emailjs");
 var scrape = require('./scrape');
 var moment = require('moment');
+var request = require('request');
 app.use(bodyParser({limit:'50mb'}));
 
 // configuration ===========================================
@@ -33,12 +34,9 @@ app.use(bodyParser({limit:'50mb'}));
 	app.use(passport.initialize());
 	app.use(passport.session()); // persistent login sessions
 	app.use(flash()); // use connect-flash for flash messages stored in session
-	// routes ==================================================
+	// routes =============================================cors = require('./cors');
 	require('./app/routes.js')(app, passport); // load our routes and pass in our app and fully configured passport
 	require('./config/email.js')(app, email, moment);
-	//email server
-	//var server = require('./config/email.js');
-	//var server = emailserver.server;
 
 
 // =====================================
@@ -160,6 +158,32 @@ else {
 }
 });
 
+// =====================================
+// Handles Recipe Searchs ==============
+// =====================================
+app.post('/search', function(req, res){
+	console.log(req.body.keyword);
+	var searchkey = encodeURIComponent(req.body.keyword);
+	var url =  "http://api.yummly.com/v1/api/recipes?_app_id=---&_app_key=---&q="
+							+ searchkey;
+	console.log(url);
+	/*var url = http://www.food2fork.com/api/search?key=---&q="
+	 												+ searchkey; */
+	/*var url = "http://api.bigoven.com/recipes?pg=1&rpp=25&title_kw="
+						+ searchkey
+						+ "&api_key=---"*/
+	request({
+  	uri: url,
+  	method: "GET",
+  	timeout: 10000,
+  	followRedirect: true,
+  	maxRedirects: 10
+		}, function(error, response, body) {
+  				console.log(body);
+					res.send(body);
+		});
+
+});
 
 
 // =====================================
@@ -373,6 +397,7 @@ function inGroceryList(recipe, list)
 	}
 	return -1;
 }
+
 
 app.listen('8081');
 console.log('Magic happens on port 8081');
