@@ -166,7 +166,6 @@ app.post('/search', function(req, res){
 	var searchkey = encodeURIComponent(req.body.keyword);
 	var url =  "http://api.yummly.com/v1/api/recipes?_app_id=---&_app_key=---&q="
 							+ searchkey;
-	console.log(url);
 	/*var url = http://www.food2fork.com/api/search?key=---&q="
 	 												+ searchkey; */
 	/*var url = "http://api.bigoven.com/recipes?pg=1&rpp=25&title_kw="
