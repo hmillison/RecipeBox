@@ -162,7 +162,6 @@ else {
 // Handles Recipe Searchs ==============
 // =====================================
 app.post('/search', function(req, res){
-	console.log(req.body.keyword);
 	var searchkey = encodeURIComponent(req.body.keyword);
 	var url =  "http://api.yummly.com/v1/api/recipes?_app_id=---&_app_key=---&q="
 							+ searchkey;
@@ -178,10 +177,48 @@ app.post('/search', function(req, res){
   	followRedirect: true,
   	maxRedirects: 10
 		}, function(error, response, body) {
-  				console.log(body);
 					res.send(body);
 		});
 
+});
+
+app.post('/searchadd', function(req,res){
+	var addedrecipes = req.body.recipes;
+	for(var i = 0;i<addedrecipes.length;i++){
+		var url = "http://api.yummly.com/v1/api/recipe/" + addedrecipes[i]
+					  + "?_app_id=291777f0&_app_key=c71a65634b748e047b9fd3ac0d7d6337";
+	request({
+		uri: url,
+		method: "GET",
+		timeout: 10000,
+		followRedirect: true,
+		maxRedirects: 10
+		}, function(error, response, body) {
+					var json = JSON.parse(body);
+					var newrecipe = new Recipe(json.name,json.images[0].hostedLargeUrl,json.ingredientLines,json.source.sourceRecipeUrl);
+					if(newrecipe != null && (newrecipe.name != "" || newrecipe.ingredients != "" || newrecipe.directions != ""))
+					{
+							//set placeholder image if recipe has none
+							if(newrecipe.image == "")
+							{
+								newrecipe.image = "/images/placeholder.png";
+							}
+							req.user.data.recipes.push(newrecipe);
+
+							req.user.save(function(err) {
+														if (err){
+																throw err;
+																html = "<div class='alert alert-danger' id='flashmessage'>Error Saving Recipe</div>";
+																req.flash('msg',html);
+																res.redirect('/');
+															}
+														});
+					}
+				});
+	}
+	var html = "<div class='alert alert-success' id='flashmessage'>Recipe Added Succesfully</div>";
+	res.send(html);
+	res.redirect('/sort');
 });
 
 
@@ -358,7 +395,7 @@ app.post('/updatetags', function(req, res){
 });
 
 // =====================================
-// Functions ======
+// Functions =========================
 // =====================================
 
 //helper function to determine if the url is supported by scraping
@@ -382,6 +419,14 @@ function compare(a,b) {
   if (a.name > b.name)
     return 1;
   return 0;
+}
+
+function Recipe(name, image, ingredients, directions)
+{
+	this.name = name;
+	this.image = image;
+	this.ingredients = ingredients;
+	this.directions = directions;
 }
 
 function inGroceryList(recipe, list)
