@@ -36,18 +36,7 @@ module.exports = {
 	        })
 
 
-	        //Get directions separated by //
-	        $('.col12.directions').filter(function(){
-	        	var data = $(this);
-	        	var list = data.children().nextUntil($('.categories'));
-	        	var parts = [];
-	        	directions = ""
-	        	list.each(function(i,elem){
-	        		parts[i] = $(this).text();
-	        		directions += parts[i] + "//";
-	        	});
-	        	json.directions = directions;
-	        })
+	       json.directions = url;
 
         	return json;
 
@@ -86,20 +75,7 @@ module.exports = {
 	        json.ingredients = ingredients;
 		})
 
-		$('.directLeft').filter(function(){
-			var data = $(this);
-			var list = data.children().next().children();
-			var parts = [];
-	        directions = ""
-	        list.each(function(i,elem){
-	        		parts[i] = $(this).text();
-	        		if(parts[i] != "Kitchen-Friendly View")
-	        		{
-	        			directions += parts[i] + "//";
-	        		}
-	        	});
-			json.directions = directions;
-		})
+		json.directions = url;
 
 		return json;
 	},

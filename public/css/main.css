@@ -225,3 +225,11 @@ Recipe Search Modal
 text-align: center;
 font-size: 12px;
 }
+
+#recipe-search-body .thumbnail{
+	cursor:pointer;
+}
+
+#recipe-search-body .thumbnail.active{
+	background:#ddd;
+}

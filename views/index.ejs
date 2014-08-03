@@ -54,7 +54,7 @@
 						<input type="text" class="form-control input-lg text-center" placeholder="Enter the name of a recipe to get started!" name="keyword" id="keyword" >
 					</div>
 
-					<button type="submit" id="addrecipe" class="btn btn-primary btn-lg" >Add</button>
+					<button type="submit" id="searchrecipe" data-loading-text="Loading..." class="btn btn-primary btn-lg" >Search</button>
 				</form>
 				</form>
 
@@ -117,7 +117,7 @@
       </div>
       <div class="modal-footer">
       	<button class="btn btn-primary modal-listadd" id="listadd" role="button">Add to List</button>
-	 	<button class="btn btn-default modal-delete" id="delete" role="button">Delete</button>
+	 			<button class="btn btn-default modal-delete" id="delete" role="button">Delete</button>
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
       </div>
     </div>
@@ -136,6 +136,7 @@
 
 			</div>
 			<div class="modal-footer">
+				<button type="button" class="btn btn-primary" id="recipe-search-add">Add Selected Recipes</button>
 				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
 			</div>
 		</div>
@@ -188,6 +189,12 @@ $('#recipe-scrape').hide();
 						$('.thumbnail').each(function(index){
 								var image = $(this).find('img');
 								var image_height = image[0].clientHeight;
+								var foodtitle = $(this).find('h4');
+								/*while(foodtitle[0].clientHeight < 60)
+								{
+									var fontsize = parseFloat(foodtitle.css('font-size')) + .5;
+									foodtitle.css({'font-size' : fontsize +'px'});
+								}*/
 								if(image[0].clientHeight < 245){
 									var margin = 255 - image_height
 									image.css({'margin-bottom' : margin+'px'})
@@ -209,8 +216,8 @@ $('#recipe-scrape').hide();
 				$('#recipe-details-title').text(user.data.recipes[foodid].name);
 				var detailbody = "<p><ul><h4>Ingredients</h4>";
 				detailbody += parseToHTML(ingredients);
-				detailbody += "</ul><p><ul><h4>Directions</h4>";
-				detailbody += parseToHTML(user.data.recipes[foodid].directions);
+				detailbody += "</ul><p><ul class='text-center'>";
+				detailbody += "<a href='" + user.data.recipes[foodid].directions + "' target='_blank'><button class='btn btn-primary'>Read Full Directions</button></a></ul>";
 				$('#recipe-details-body').html(detailbody);
 				$('.modal-listadd').attr("id","listadd" + foodid);
 				$('.modal-delete').attr("id","delete" + foodid);
@@ -419,6 +426,7 @@ $('#recipe-scrape').hide();
 
 		$('#recipe-search').submit(function(e){
 			e.preventDefault();
+			$("#searchrecipe").button('loading');
 			var searchkey = $('#keyword').val();
 			$.ajax({
 						type: "POST",
@@ -430,9 +438,9 @@ $('#recipe-scrape').hide();
 
 								var searchresult = JSON.parse(data);
 								$('#recipe-search-title').text("Search Results for: " + searchkey)
-								console.log(searchresult.matches);
 								$('#recipe-search-body').html(parseMatches(searchresult.matches));
 								$('#recipe-search-body').append(searchresult.attribution.html);
+								$("#searchrecipe").button('reset');
 								$('#recipesearch').modal('show');
 
 					}
@@ -454,7 +462,7 @@ $('#recipe-scrape').hide();
 					output += "<div class='col-md-2'>";
 				}
 
-				output +=	"<div class='thumbnail'>";
+				output +=	"<div class='thumbnail searchresult' id=" + list[i].id + ">";
 				if(typeof(list[i].imageUrlsBySize) != 'undefined'){
 					output +=	"<img src='"+ list[i].imageUrlsBySize[90] + "'>";
 				}
@@ -467,7 +475,45 @@ $('#recipe-scrape').hide();
 		return output;
 	}
 
+ $(document).on("click", ".thumbnail.searchresult", function() {
+			if($(this).hasClass('active'))
+			{
+					$(this).removeClass('active');
+			}
+			else{
+					$(this).addClass('active');
+			}
+	});
 
+$('#recipe-search-add').click(function(){
+		var addedrecipes = []
+		$('.thumbnail.searchresult').each(function(index){
+				var item = $(this);
+				if(item[0].classList[2] == "active")
+					{
+							addedrecipes.push(item[0].id);
+					}
+	})
+	if(addedrecipes.length > 0)
+	{
+		console.log(addedrecipes);
+		$.ajax({
+			type: "POST",
+			data: {
+							recipes: addedrecipes
+						},
+			url: "/searchadd",
+			success: function(data)
+			{
+					$("#msg").html(data);
+					$("#flashmessage").fadeOut(1000,function(){
+					location.href = "/";
+				});
+			}
+		});
+	}
+
+})
 
 
 
