@@ -196,8 +196,8 @@ $('#recipe-scrape').hide();
 									foodtitle.css({'font-size' : fontsize +'px'});
 								}*/
 								if(image[0].clientHeight < 245){
-									var margin = 255 - image_height
-									image.css({'margin-bottom' : margin+'px'})
+									var margin = 245 - image_height
+									foodtitle.css({'margin-bottom' : margin+'px'})
 								}
 					})
 
@@ -227,13 +227,10 @@ $('#recipe-scrape').hide();
 		function parseToHTML(list)
 		{
 			var output = "";
-			list = list.split("//");
 			for(var i = 0;i<list.length;i++)
 			{
-				if(/\S/.test(list[i]))
-				{
-					output += "<li>" + list[i] + "</li>"
-				}
+				output += "<li>" + list[i] + "</li>"
+
 			}
 			return output;
 		}
@@ -439,7 +436,7 @@ $('#recipe-scrape').hide();
 								var searchresult = JSON.parse(data);
 								$('#recipe-search-title').text("Search Results for: " + searchkey)
 								$('#recipe-search-body').html(parseMatches(searchresult.matches));
-								$('#recipe-search-body').append(searchresult.attribution.html);
+								$('#recipe-search-body').append("<div class='text-center'>" + searchresult.attribution.html + "</div>");
 								$("#searchrecipe").button('reset');
 								$('#recipesearch').modal('show');
 
@@ -452,22 +449,20 @@ $('#recipe-scrape').hide();
 		var output = "";
 		for(var i = 0;i<list.length;i++)
 		{
-				if(i % 5 == 0)
+				if(i % 4 == 0)
 				{
 					output += "<div class='row'>";
-					output += "<div class='col-md-2 col-md-offset-1'>";
 				}
-				else
-				{
-					output += "<div class='col-md-2'>";
-				}
+
+					output += "<div class='col-sm-6 col-lg-3'>";
+
 
 				output +=	"<div class='thumbnail searchresult' id=" + list[i].id + ">";
 				if(typeof(list[i].imageUrlsBySize) != 'undefined'){
 					output +=	"<img src='"+ list[i].imageUrlsBySize[90] + "'>";
 				}
 				output += "<div class='caption'><div class='search-name'>" + list[i].recipeName + "</div></div></div></div>";
-				if((i+1) % 5 == 0)
+				if((i+1) % 4 == 0)
 				{
 					output += "</div>";
 				}
@@ -496,7 +491,6 @@ $('#recipe-search-add').click(function(){
 	})
 	if(addedrecipes.length > 0)
 	{
-		console.log(addedrecipes);
 		$.ajax({
 			type: "POST",
 			data: {

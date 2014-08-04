@@ -186,7 +186,7 @@ app.post('/searchadd', function(req,res){
 	var addedrecipes = req.body.recipes;
 	for(var i = 0;i<addedrecipes.length;i++){
 		var url = "http://api.yummly.com/v1/api/recipe/" + addedrecipes[i]
-					  + "?_app_id=291777f0&_app_key=c71a65634b748e047b9fd3ac0d7d6337";
+					  + "?_app_id=---&_app_key=---";
 	request({
 		uri: url,
 		method: "GET",
@@ -255,12 +255,17 @@ app.get('/sort', function(req, res){
 app.post('/delete', function(req, res){
 	var deleteid = req.query.item;
 	var user = req.user;
+	var listid = inGroceryList(req.user.data.recipes[deleteid],req.user.data.list);
+	if(listid != -1){
+		user.data.recipes.splice(listid,1);
+	}
 	user.data.recipes.splice(deleteid,1);
 	user.save(function(err) {
              	 if (err)
                 	throw err;
                 });
 	//res.render('index.ejs',{user:req.user,errormessage:""});
+	res.redirect('/listrm?item=' + deleteid);
 	var html = "<div class='alert alert-success' id='flashmessage'>Recipe Deleted Succesfully</div>";
 	res.send(html);
 	//req.flash('msg',html);
@@ -433,8 +438,8 @@ function inGroceryList(recipe, list)
 {
 	for(var i = 0;i<list.length;i++)
 	{
-		if(recipe.name == list[i].name && recipe.image == list[i].image
-			&& recipe.ingredients == list[i].ingredients && recipe.directions == list[i].directions)
+		console.log(recipe.name + "---" + list[i].name)
+		if(recipe.name == list[i].name && recipe.image == list[i].image && recipe.directions == list[i].directions)
 		{
 			return i;
 		}
