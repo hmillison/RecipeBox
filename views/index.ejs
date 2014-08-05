@@ -28,7 +28,6 @@
 		<!-- HEADER -->
 		<div class="text-center">
 			<div id="headline">Recipe Box </div>
-			collect your favorite recipes online
 		</div>
 
 		<div id="scrape-form" class="row">
@@ -177,28 +176,17 @@ var user= <%- JSON.stringify(user) %>;
 $('#recipes').hide();
 $('#recipe-scrape').hide();
 
-		$(document).ready(function(){
-
-		});
-
  		$(window).load(function() {
   					$('#loader').hide();
   					$('#recipes').show();
   					$("#flashmessage").fadeOut(2000);
 
-						$('.thumbnail').each(function(index){
-								var image = $(this).find('img');
-								var image_height = image[0].clientHeight;
-								var foodtitle = $(this).find('h4');
-								/*while(foodtitle[0].clientHeight < 60)
-								{
-									var fontsize = parseFloat(foodtitle.css('font-size')) + .5;
-									foodtitle.css({'font-size' : fontsize +'px'});
-								}*/
-								if(image[0].clientHeight < 245){
-									var margin = 245 - image_height
-									foodtitle.css({'margin-bottom' : margin+'px'})
-								}
+						$('.hover-container').each(function(index){
+								var info = $(this).find('.hover-info');
+								var hover = $(this).find('.hover');
+								var height = $('.hover-container').height() - hover.height();
+								info.css({'height' : height+'px'})
+
 					})
 
 			});
@@ -209,7 +197,7 @@ $('#recipe-scrape').hide();
 		});
 
 
-			$('.foodpic').on('click', function()
+			$('.hover-info').on('click', function()
 			{
 				var foodid = $(this).attr('id');
 				var ingredients = user.data.recipes[foodid].ingredients;
@@ -378,8 +366,7 @@ $('#recipe-scrape').hide();
      	 {
      	 	var tagid = $(this).attr('id');
      	 	tagid = tagid.replace("tagbutton-","");
-     	 	console.log(user.data.tags);
-     	 	console.log(user.data.recipes[tagid].tags);
+
      	 	for(var i = 0;i<user.data.tags.length;i++)
      	 	{
      	 		for(var k = 0;k<user.data.recipes[tagid].tags.length;k++)
@@ -436,6 +423,7 @@ $('#recipe-scrape').hide();
 								var searchresult = JSON.parse(data);
 								$('#recipe-search-title').text("Search Results for: " + searchkey)
 								$('#recipe-search-body').html(parseMatches(searchresult.matches));
+
 								$('#recipe-search-body').append("<div class='text-center'>" + searchresult.attribution.html + "</div>");
 								$("#searchrecipe").button('reset');
 								$('#recipesearch').modal('show');
@@ -447,6 +435,7 @@ $('#recipe-scrape').hide();
 	function parseMatches(list)
 	{
 		var output = "";
+
 		for(var i = 0;i<list.length;i++)
 		{
 				if(i % 4 == 0)
@@ -461,7 +450,16 @@ $('#recipe-scrape').hide();
 				if(typeof(list[i].imageUrlsBySize) != 'undefined'){
 					output +=	"<img src='"+ list[i].imageUrlsBySize[90] + "'>";
 				}
-				output += "<div class='caption'><div class='search-name'>" + list[i].recipeName + "</div></div></div></div>";
+				output += "<div class='caption'><div class='search-name'>" + list[i].recipeName + "<br>";
+				if(list[i].sourceDisplayName){
+					output += "<span class='text-muted'>" + list[i].sourceDisplayName + "</span><div>";
+				}
+				var rating = parseFloat(list[i].rating);
+				console.log(list[i].rating);
+				for(var k=0;k<rating;k++){
+					output += "<i class='fa fa-star'></i>";
+				}
+				output += "</div></div></div></div></div>";
 				if((i+1) % 4 == 0)
 				{
 					output += "</div>";
@@ -501,7 +499,8 @@ $('#recipe-search-add').click(function(){
 			{
 					$("#msg").html(data);
 					$("#flashmessage").fadeOut(1000,function(){
-					location.href = "/";
+						$('#recipesearch').modal('hide');
+					location.href = "/sort";
 				});
 			}
 		});
