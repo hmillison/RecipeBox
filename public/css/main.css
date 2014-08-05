@@ -33,15 +33,20 @@ Bootstrap Overrides
 	border-color:#007fff !important;
 }
 
-.thumbnail{
-	border-radius:10px;
-	border:none;
-	-webkit-box-shadow: 0 0 4px rgba(0, 0, 0, 0.2), inset 0 0 50px rgba(0, 0, 0, 0.1);
-	-moz-box-shadow: 0 0 4px rgba(0, 0, 0, 0.2), inset 0 0 50px rgba(0, 0, 0, 0.1);
-	box-shadow: 0 0 5px rgba(0, 0, 0, 0.2), inset 0 0 50px rgba(0, 0, 0, 0.1);
+#recipes .col-lg-3{
+	width:auto !important;
+	margin:0;
+	padding:0;
 }
 
-.thumbnail>img
+#recipes .thumbnail{
+	border:none;
+	padding:0 !important;
+	background:none !important;
+	margin:0 !important;
+}
+
+#recipes .thumbnail>img
 {
 	width: auto;
 	max-width: 100%;
@@ -49,7 +54,7 @@ Bootstrap Overrides
 }
 
 .thumbnail h4{
-	height:60px;
+	margin:0px;
 }
 
 @media (max-width: 768px){
@@ -105,8 +110,34 @@ text-align: center;
 	padding-top:30px;
 }
 
-.foodpic{
+.hover-container{
+	opacity:0;
+	height:100%;
+	bottom:0;
+	width:100%;
+	position: absolute;
+	-webkit-transition: all 0.5s;
+	-moz-transition: all 0.5s;
+	transition: all 0.5s;
+}
+.hover-container:hover{
+	opacity:1;
+}
+.hover-info{
 	cursor:pointer;
+}
+.hover{
+	color:#fff;
+	position:absolute;
+	bottom:0;
+	width:100%;
+	background:rgba(0,0,0,.8);
+
+}
+
+
+.foodpic{
+	opacity:1 !important;
 }
 
 #recipe-buttons{
