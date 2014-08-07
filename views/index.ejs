@@ -59,9 +59,12 @@
 
 			</div>
 		</div>
-<div id="loader"><img src="images/loader.gif" style="margin-top:10px"></div>
 <div class="container" id="recipes">
+
 		<% include recipe.ejs %>
+</div>
+<div>
+	<img src="images/loader.gif" id="loader">
 </div>
 
 
@@ -74,7 +77,7 @@
         <h4 class="modal-title" id="addrecipe">Add A Recipe</h4>
       </div>
       <div class="modal-body">
-		<form id="addrecipe" action="/addrecipe" method="post" enctype="multipart/form-data">
+		<form id="addrecipe" method="post" enctype="multipart/form-data">
 			<input type="text" class="form-control text-center" placeholder="Enter name of a recipe" name="name" id="recipe-name" >
 			<input id="recipe-image" type="file" class="file">
 			<div class="input-group">
@@ -251,32 +254,52 @@ $('#recipe-scrape').hide();
 									'previewClass':'recipe-image-preview',
 									'captionClass':'recipe-image-caption',
 									'mainClass':'recipe-image-input'});
-			var ingredientlist = "";
-			var directionlist = "";
+			var ingredientlist = [];
+			var directionlist = [];
 			var recipeimage = "";
 
-			var fileInput = document.getElementById('recipe-image');
-			fileInput.addEventListener('change',function(e){
-				var file = fileInput.files[0];
-				var imageType = /image.*/;
-				if(file.type.match(imageType))
-				{
-					var reader = new FileReader()
-					reader.onload = function(e){
-						recipeimage = new Image();
-						recipeimage.src = reader.result;
-						//$("#ingredient-list").append(recipeimage);
-					}
-					reader.readAsDataURL(file);
-
+			function readImage(input)
+			{
+    		if ( input.files && input.files[0] ) {
+        	var FR= new FileReader();
+        	FR.onload = function(e) {
+             	$('#img').attr( "src", e.target.result );
+							recipeimage = e.target.result;
+        	};
+        		FR.readAsDataURL( input.files[0] );
+    			}
 				}
 
-			});
+			function sendtoImgur(imagedata, callback)
+			{
+					$.ajax({
+      			url: 'https://api.imgur.com/3/image',
+      			method: 'POST',
+      			headers: {
+        		Authorization: 'Client-ID d692345fdc7a0af',
+        		Accept: 'application/json'
+      			},
+      			data: {
+        		image: imagedata,
+        		type: 'base64'
+      	},
+      	success: function(result) {
+					var output = result.data.link;
+					callback(output);
+      		}
+    		});
+			}
+
+
+			$("#recipe-image").change(function(){
+					readImage( this );
+				});
+
 
 			$("#ingredient-add").click(function(){
 				if(updateFormList("#ingredient"))
 				{
-					ingredientlist += $("#ingredient-input").val() + "//";
+					ingredientlist.push($("#ingredient-input").val());
 					$("#ingredient-input").val("");
 				}
 			});
@@ -285,27 +308,34 @@ $('#recipe-scrape').hide();
 			$("#direction-add").click(function(){
 				if(updateFormList("#direction"))
 				{
-					directionlist += $("#direction-input").val() + "//";
+					directionlist.push($("#direction-input").val());
 					$("#direction-input").val("");
 				}
 			});
 
-			/*$("#add-recipe-form").click(function(){
-				var newrecipe = { name : "", image: "", ingredients : "", directions : ""};
+			$("#add-recipe-form").click(function(e){
+				e.preventDefault();
+				sendtoImgur(recipeimage.replace('data:image/jpeg;base64,',''), sendRecipe);
+
+
+			});
+
+			function sendRecipe(output) {
+				ne = output;
+				var newrecipe = { name : "", image: "", ingredients : "", directions : "", tags: []};
 				newrecipe.name = $("#recipe-name").val();
-				//newrecipe.image = new Image();
-				newrecipe.image = recipeimage.src;
-				console.log(newrecipe.image);
+				newrecipe.image = output;
 				newrecipe.ingredients = ingredientlist;
 				newrecipe.directions = directionlist;
 				$.ajax({
- 					type: "POST",
- 				 	url: "/addrecipe",
- 				 	data:newrecipe,
+					type: "POST",
+						url: "/addrecipe",
+						data:newrecipe,
 					}).done(function() {
- 				 		setTimeout(location.href = "/",1000);
+							setTimeout(location.href = "/",1000);
 					});
-			});*/
+
+			}
 
 			//Updates running list of directions/ingredients for Add Recipe form
 			function updateFormList(selector)
@@ -374,11 +404,27 @@ $('#recipe-scrape').hide();
      	 		{
      	 			if(user.data.tags[i] == user.data.recipes[tagid].tags[k])
      	 			{
-     	 				console.log("iterate");
      	 				$("#tagmenu-" + tagid + " #tag-" + i).attr('checked', true);
      	 			}
 				}
 			}
+		});
+
+		$(".delete-tag").on('click',function()
+		{
+				var deleteid = $(this).attr('id');
+				$.ajax({
+						type: "POST",
+						url: "/tagrm?item=" + deleteid,
+					success: function(data) {
+							$('html, body').animate({ scrollTop: 0 }, 0);
+							   $("#viewmenu").dropdown("toggle");
+								$("#msg").html(data);
+								$("#flashmessage").fadeOut(1000,function(){
+									location.href = "/";
+								});
+						},
+					});
 		});
 
 		$('.dropdown-menu').on('click', function(e) {
@@ -410,6 +456,8 @@ $('#recipe-scrape').hide();
 					})
 				}
 				else if(submitType == "all-tags"){
+					$('#view-form input:checkbox').removeAttr('checked');
+
 						$('.thumbnail').fadeIn();
 				}
     });

@@ -49,7 +49,11 @@ app.use(bodyParser({limit:'50mb'}));
 		{
 			output = req.user;
 		}
-		 var message = req.flash('msg');
+		var message = "";
+		if(req.flash)
+		{
+		  message = req.flash('msg');
+	}
 
 	res.render('index.ejs',{user:output,errormessage:message});
 });
@@ -188,7 +192,7 @@ app.post('/searchadd', function(req,res){
 	var addedrecipes = req.body.recipes;
 	for(var i = 0;i<addedrecipes.length;i++){
 		var url = "http://api.yummly.com/v1/api/recipe/" + addedrecipes[i]
-					  + "?_app_id=---&_app_key=---";
+					  + "?_app_id=---&_app_key=--";
 	request({
 		uri: url,
 		method: "GET",
@@ -232,20 +236,20 @@ app.get('/sort', function(req, res){
 	{
 		var temp = [];
 		temp = req.user.data.recipes;
-		temp.sort(compare);
+		temp.sort(comparename);
 		req.user.data.recipes = temp;
+		req.user.markModified('data');
 		req.user.save(function(err) {
         	 if (err)
             	    throw err;
                 	});
 
-		var html = "<div class='alert alert-success' id='flashmessage'>New Recipe Added!</div>";
-		res.render('index.ejs',{user:req.user,errormessage:html});
+		//var html = "<div class='alert alert-success' id='flashmessage'>New Recipe Added!</div>";
+		res.render('index.ejs',{user:req.user});
+
 	}
-	else
-	{
-		res.redirect('/');
-	}
+
+
 
 });
 
@@ -271,7 +275,6 @@ app.post('/delete', function(req, res){
 	var html = "<div class='alert alert-success' id='flashmessage'>Recipe Deleted Succesfully</div>";
 	res.send(html);
 	//req.flash('msg',html);
-	res.redirect('/');
 });
 
 // =====================================
@@ -325,21 +328,16 @@ app.post('/listrm', function(req, res){
 // =====================================
 app.post('/addrecipe', function(req, res){
 	var html = "";
-	console.log(req.files);
-	/*var newrecipe = { name : "", image: "", ingredients : "", directions : ""};
+	var newrecipe = { name : "", image: "", ingredients : "", directions : "", tags : []};
 	//check if the recipe was added correctly
 	if(req.body != null && (req.body.name != "" || req.body.ingredients != "" || req.body.directions != ""))
 	{
 		newrecipe.name = req.body.name;
-		/*fs.readFile(req.body.image, function (err, data) {
-		  // ...
-  			var newPath = "/uploads/" + data;
-  			fs.writeFile(newPath, data, function (err) {
- 		 });
-		});
-		newrecipe.image = "";
+
+		newrecipe.image = req.body.image;
 		newrecipe.ingredients = req.body.ingredients;
 		newrecipe.directions = req.body.directions;
+
 		req.user.data.recipes.push(newrecipe);
 
 		req.user.save(function(err) {
@@ -361,7 +359,8 @@ app.post('/addrecipe', function(req, res){
 		     html = "<div class='alert alert-danger' id='flashmessage'>Error Adding Recipe</div>";
 			req.flash('msg',html);
             res.redirect('/');
-	}*/
+	}
+
 });
 
 // =====================================
@@ -384,6 +383,10 @@ app.post('/updatetags', function(req, res){
 			req.user.data.recipes[recipeid].tags.push(req.body[index]);
 		}
 	}
+	var temp = [];
+	temp = req.user.data.tags;
+	temp.sort(comparetags);
+	req.user.data.tags = temp;
 	req.user.markModified('data');
 	req.user.save(function(err) {
                if (err){
@@ -400,8 +403,53 @@ app.post('/updatetags', function(req, res){
 });
 
 // =====================================
-// Functions =========================
+// Remove selected recipe ==============
 // =====================================
+app.post('/tagrm', function(req,res){
+		var deleteid = req.query.item;
+		var temp = [];
+		temp = req.user.data.tags;
+		temp.splice(deleteid,1);
+		req.user.data.tags = temp;
+		req.user.data = removeTags(req.user.data, deleteid);
+		req.user.save(function(err) {
+								if (err)
+									throw err;
+								});
+		var html = "<div class='alert alert-danger' id='flashmessage'>Tag deleted</div>";
+		res.send(html);
+});
+
+// =====================================
+// Functions ===========================
+// =====================================
+
+function Recipe(name, image, ingredients, directions)
+{
+	this.name = name;
+	this.image = image;
+	this.ingredients = ingredients;
+	this.directions = directions;
+}
+
+function removeTags(user, id)
+{
+	var tag = user.tags[id];
+	for(var i = 0;i<user.recipes.length;i++)
+	{
+		if(user.recipes[i].tags != undefined)
+		{
+			for(var k = 0;k<user.recipes[i].tags.length;k++)
+			{
+				if(user.recipes[i].tags[k] == tag)
+				{
+					user.recipes[i].tags[k].splice(k,1);
+				}
+			}
+		}
+	}
+	return user;
+}
 
 //helper function to determine if the url is supported by scraping
 function inArray(url, valid)
@@ -418,7 +466,7 @@ function inArray(url, valid)
 }
 
 //Helper function for sort
-function compare(a,b) {
+function comparename(a,b) {
   if (a.name < b.name)
      return -1;
   if (a.name > b.name)
@@ -426,13 +474,16 @@ function compare(a,b) {
   return 0;
 }
 
-function Recipe(name, image, ingredients, directions)
-{
-	this.name = name;
-	this.image = image;
-	this.ingredients = ingredients;
-	this.directions = directions;
+//Helper function for sort
+function comparetags(a,b) {
+	if (a < b)
+		return -1;
+	if (a > b)
+		return 1;
+	return 0;
 }
+
+
 
 function inGroceryList(recipe, list)
 {
