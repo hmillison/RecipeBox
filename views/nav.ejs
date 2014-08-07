@@ -21,13 +21,8 @@
 		View <span class="caret"></span>
 	</button>
 	<ul class="dropdown-menu dropdown-menu-form" role="menu" id="viewmenu">
-				<form action="" method="post" id="view">
-					<li>
-						<label>
-							<input type="checkbox" name="all" id="all" checked="on">
-							<span></span>
-							All
-						</label>
+				<form method="post" id="view-form">
+
 					<% for(var k=0;k<user.data.tags.length;k++) {%>
 				<li>
 					<label>
@@ -39,8 +34,11 @@
 			<% } %>
 					<li class="divider"></li>
 					<li>
-						<div id="update-tag">
-							<input type="submit" class="btn btn-primary btn-sm" value="Show Recipes">
+						<div id="text-center">
+							<input type="submit" class="btn btn-primary btn-sm" id="view-tags" value="Show Tagged Recipes">
+						</div>
+						<div id="text-center">
+							<input type="submit" class="btn btn-primary btn-sm" id="all-tags" value="Show All Recipes">
 						</div>
 					</li>
 							</form>

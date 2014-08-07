@@ -30,9 +30,9 @@
 			<div id="headline">Recipe Box </div>
 		</div>
 
-		<div id="scrape-form" class="row">
+		<div id="scrape-form">
 			<div class="col-sm-8 col-sm-offset-2 text-center">
-				<div id="msg"> <%- errormessage %> </div>
+				<div id="msg"> </div>
 				<div class="recipe-tab-container">
 						<div class="tab active" id=recipe-search-tab>
 								Search
@@ -43,14 +43,14 @@
 				</div>
 				<form action="/scrape" method="post" id="recipe-scrape">
 					<div class="form-group">
-						<input type="text" class="form-control input-lg text-center" placeholder="Enter the URL of a recipe to get started!" name="url" id="url" >
+						<input type="text" class="form-control input-lg text-center" placeholder="Enter a URL to import recipe" name="url" id="url" >
 					</div>
 
 					<button type="submit" id="addrecipe" class="btn btn-primary btn-lg" >Add</button>
 				</form>
 				<form id="recipe-search">
 					<div class="form-group">
-						<input type="text" class="form-control input-lg text-center" placeholder="Enter the name of a recipe to get started!" name="keyword" id="keyword" >
+						<input type="text" class="form-control input-lg text-center" placeholder="Search for a recipe or ingredient" name="keyword" id="keyword" >
 					</div>
 
 					<button type="submit" id="searchrecipe" data-loading-text="Loading..." class="btn btn-primary btn-lg" >Search</button>
@@ -233,6 +233,7 @@ $('#recipe-scrape').hide();
  				 url: "/delete?item=" + deleteindex,
 				success: function(data) {
 						$('html, body').animate({ scrollTop: 0 }, 0);
+						console.log(data);
  				 		$("#msg").html(data);
  				 		$("#flashmessage").fadeOut(1000,function(){
  				 			location.href = "/";
@@ -387,6 +388,50 @@ $('#recipe-scrape').hide();
 
 		});
 
+		 $( "#view-form" ).submit(function (e) {
+        // Get the submit button element
+				    e.preventDefault();
+
+				var formvals = $(this).serializeArray();
+				var selectedtags = [];
+				for(var i = 0;i<formvals.length;i++){
+					selectedtags.push(formvals[i].value);
+				}
+        var submitType = $(this).find("input[type=submit]:focus" ).attr('id');
+				if(submitType == "view-tags"){
+						$('.thumbnail').each(function(index){
+								var recipeid = $(this).attr('id');
+								$(this).fadeIn();
+								if(recipeintags(recipeid,selectedtags) == false){
+										$(this).fadeOut();
+								}
+
+
+					})
+				}
+				else if(submitType == "all-tags"){
+						$('.thumbnail').fadeIn();
+				}
+    });
+
+		function recipeintags(id,list)
+		{
+			if(user.data.recipes[id].tags != undefined)
+			{
+				var recipe = user.data.recipes[id].tags;
+				for(var i = 0;i<list.length;i++)
+					{
+						for(var j = 0;j<recipe.length;j++)
+						{
+							if(list[i] == recipe[j]){
+								return true;
+							}
+						}
+					}
+		}
+		return false;
+		}
+
 		$(".popover-help").popover({
 			  trigger: 'focus'
 		});
@@ -497,9 +542,9 @@ $('#recipe-search-add').click(function(){
 			url: "/searchadd",
 			success: function(data)
 			{
+					$('#recipesearch').modal('hide');
 					$("#msg").html(data);
 					$("#flashmessage").fadeOut(1000,function(){
-						$('#recipesearch').modal('hide');
 					location.href = "/sort";
 				});
 			}
