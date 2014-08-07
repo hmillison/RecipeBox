@@ -24,12 +24,15 @@
 				<form method="post" id="view-form">
 
 					<% for(var k=0;k<user.data.tags.length;k++) {%>
-				<li>
+				<li class="tag">
 					<label>
 							<input type="checkbox" name="tag-<%= k %>" id="tag-<%= k %>" value="<%= user.data.tags[k] %>" >
 					<span></span>
 					<%= user.data.tags[k] %>
 				</label>
+				<span class="delete-tag"  id="<%= k %>">
+					<i class="fa fa-times"></i>
+				</span>
 			</li>
 			<% } %>
 					<li class="divider"></li>
@@ -48,7 +51,7 @@
 <% }%>
 <button type="button"
 		class="btn btn-default btn-default popover-help"
-		style="float:right"
+		style="float:right;margin-right:5px;"
 		data-toggle="popover" title="About"
 		data-placement="left"
 		data-content="Recipe Box is a web app created by Henry Millison for the purpose of saving and managing your favorite recipes. How do you use it? Either enter a url of your favorite recipe in the box below or use the Add Recipe button to the right to manually add a recipe">
