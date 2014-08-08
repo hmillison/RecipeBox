@@ -21,12 +21,15 @@
 									<ul class="dropdown-menu dropdown-menu-form" role="menu" id="tagmenu-<%= i %>">
 										<form action="/updatetags?item=<%=i %>" method="post" id="updatetags">
 											<% for(var k=0;k<user.data.tags.length;k++) {%>
-												<li>
+												<li class="tag">
 													<label>
 														<input type="checkbox" name="tag-<%= k %>" id="tag-<%= k %>" value="<%= user.data.tags[k] %>" >
 														<span></span>
 														<%= user.data.tags[k] %>
 													</label>
+													<span class="delete-tag"  id="<%= k %>">
+														<i class="fa fa-times"></i>
+													</span>
 												</li>
 											<% }%>
 											<li class="divider"></li>

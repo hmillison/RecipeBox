@@ -36,9 +36,9 @@ Bootstrap Overrides
 	margin-bottom: 5px;
 }
 
-.btn-primary:hover, .btn-primary:focus, .btn-primary:active, .btn-primary.active, .open>.dropdown-toggle.btn-primary{
-	background-color:#007fff !important;
-	border-color:#007fff !important;
+.btn-primary{
+	background-image: linear-gradient(to top,#2a75c4,#3482d3);
+	background-color: none;
 }
 
 #recipes .col-lg-3{
@@ -84,7 +84,9 @@ Form/Recipe Display
 }
 
 #loader{
-	text-align:center;
+	margin: auto;
+	display: block;
+	text-align: center;
 }
 
 .recipe-tab-container{
@@ -214,6 +216,41 @@ nav > *{
 	float:right;
 	margin-right:5px;
 }
+
+.tag:hover .delete-tag{
+	opacity:1;
+}
+
+#tag-container{
+	margin-top:30px;
+}
+
+.tag-item{
+background-color: #fff;
+float: left;
+border: 1px solid #eee;
+margin: auto 3px auto auto;
+padding: 2px 6px;
+border-radius: 6px;
+color: black;
+font-weight: normal;
+font-size: 13px;
+margin-bottom: 3px;
+cursor: pointer;
+}
+
+.tag-item:hover, .tag-item.active{
+	color:#fff;
+	background-image: linear-gradient(to top,#2a75c4,#3482d3);
+}
+
+.delete-tag{
+	opacity:0;
+	float: right;
+	margin-top: 5px;
+	cursor:pointer;
+}
+
 
 /*===========================================================
 Grocery List Modal
