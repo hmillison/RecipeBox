@@ -29,9 +29,18 @@
 		<div class="text-center">
 			<div id="headline">Recipe Box </div>
 		</div>
-
+<div class="Container">
+	<div class="col-md-2" id="tag-container">
+		<% if(user.data.tags.length > 0){%>
+		<h4>Filter by Tags</h4>
+		<% for(var k=0;k<user.data.tags.length;k++) {%>
+				<div class="tag-item" id="<%= user.data.tags[k] %>" >
+						<%= user.data.tags[k] %>
+				</div>
+		<% } } %>
+	</div>
 		<div id="scrape-form">
-			<div class="col-sm-8 col-sm-offset-2 text-center">
+			<div class="col-sm-8  text-center">
 				<div id="msg"> </div>
 				<div class="recipe-tab-container">
 						<div class="tab active" id=recipe-search-tab>
@@ -59,6 +68,7 @@
 
 			</div>
 		</div>
+</div>
 <div class="container" id="recipes">
 
 		<% include recipe.ejs %>
@@ -247,7 +257,7 @@ $('#recipe-scrape').hide();
 
 
 			$("#recipe-image").fileinput(
-									{//'showUpload':false,
+									{'showUpload':false,
 									'captionTemplate':'<div class="form-control file-caption {class}"><span class="file-caption-name"></span></div>',
 									'initialCaption':'TESTING123',
 									'initialPreview':false,
@@ -434,49 +444,39 @@ $('#recipe-scrape').hide();
 
 		});
 
-		 $( "#view-form" ).submit(function (e) {
-        // Get the submit button element
-				    e.preventDefault();
-
-				var formvals = $(this).serializeArray();
-				var selectedtags = [];
-				for(var i = 0;i<formvals.length;i++){
-					selectedtags.push(formvals[i].value);
+		$('.tag-item').on('click',function(){
+				var tagid = $(this).attr('id');
+				if($(this).hasClass('active')){
+					$('.thumbnail').fadeIn();
+					$('.tag-item').removeClass('active');
 				}
-        var submitType = $(this).find("input[type=submit]:focus" ).attr('id');
-				if(submitType == "view-tags"){
-						$('.thumbnail').each(function(index){
-								var recipeid = $(this).attr('id');
-								$(this).fadeIn();
-								if(recipeintags(recipeid,selectedtags) == false){
-										$(this).fadeOut();
+				else
+				{
+					$('.tag-item').removeClass('active');
+					$(this).addClass('active');
+					$('.thumbnail').each(function(index){
+							var recipeid = $(this).attr('id');
+							$(this).fadeIn();
+							if(recipeintags(recipeid,tagid) == false){
+									$(this).fadeOut();
 								}
-
-
-					})
+							});
 				}
-				else if(submitType == "all-tags"){
-					$('#view-form input:checkbox').removeAttr('checked');
+		});
 
-						$('.thumbnail').fadeIn();
-				}
-    });
-
-		function recipeintags(id,list)
+		function recipeintags(id,tag)
 		{
 			if(user.data.recipes[id].tags != undefined)
 			{
-				var recipe = user.data.recipes[id].tags;
-				for(var i = 0;i<list.length;i++)
+				for(var i = 0;i<user.data.recipes[id].tags.length;i++)
+				{
+					var recipe = user.data.recipes[id].tags;
+					if(tag == recipe[i])
 					{
-						for(var j = 0;j<recipe.length;j++)
-						{
-							if(list[i] == recipe[j]){
-								return true;
-							}
-						}
+						return true;
 					}
-		}
+				}
+			}
 		return false;
 		}
 
