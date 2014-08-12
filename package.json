@@ -3,7 +3,6 @@
   "version"      : "0.9.0",
   "description"  : "simple recipe manager",
   "main"         : "server.js",
-  "git repository" : "https://github.com/hmillison/RecipeBox.git",
   "author"       : "henry millison",
   "dependencies" : {
       "express"    : "latest",
