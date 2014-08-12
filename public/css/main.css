@@ -5,8 +5,9 @@
 HTML Tags
 ===========================================================*/
 body{
-background-color: #fff;
+background-color: #ECF0F1;
 font-family: 'Lato', sans-serif;
+color:#ECF0F1;
 
 }
 
@@ -20,10 +21,11 @@ Bootstrap Overrides
 #headline{
 	font-family: 'Pacifico', sans-serif;
 	font-size:60px;
+	color:#2C3E50
 }
 
 .navbar-default{
-	background-color:#ddd;
+	background-color:#BDC3C7;
 	border:0;
 	-webkit-box-shadow: -1px 2px 2px 0px rgba(50, 50, 50, 0.3);
 	-moz-box-shadow:    -1px 2px 2px 0px rgba(50, 50, 50, 0.3);
@@ -36,9 +38,23 @@ Bootstrap Overrides
 	margin-bottom: 5px;
 }
 
+.btn-default{
+	background-color:#2C3E50 !important;
+	border-color:#2C3E50 !important;
+}
+
 .btn-primary{
-	background-image: linear-gradient(to top,#2a75c4,#3482d3);
-	background-color: none;
+	background-color:#2980B9;
+}
+
+.btn-success{
+	background-color:#27AE60 !important;
+	border-color:#27AE60 !important;
+}
+
+.btn-danger{
+	background-color: #E74C3C !important;
+	border-color: #E74C3C !important;
 }
 
 #recipes .col-lg-3{
@@ -99,6 +115,7 @@ text-align: center;
 }
 
 .recipe-tab-container .tab{
+	background-color:#95A5A6;
 	display: inline-block;
 	font-weight: 400;
 	font-size: 15px;
@@ -106,7 +123,6 @@ text-align: center;
 	padding: 10px;
 	border-radius: 5px 5px 0 0;
 	text-align: center;
-	background-color: #ddd;
 	margin-right:5px;
 	cursor:pointer;
 }
@@ -137,7 +153,7 @@ text-align: center;
 	cursor:pointer;
 }
 .hover{
-	color:#fff;
+	color:#ECF0F1;
 	position:absolute;
 	bottom:0;
 	width:100%;
@@ -160,7 +176,7 @@ text-align: center;
 }
 
 ul.dropdown-menu-form {
-		color:black;
+		color:#2C3E50;
     padding: 5px 10px 0;
     overflow-y: visible;
 }
@@ -220,7 +236,7 @@ nav > *{
 #userinfo{
 	margin-left:20px;
 	margin-top:20px;
-	color:#fff;
+	color:#ECF0F1;
 }
 
 #bookmarklet
@@ -238,14 +254,14 @@ nav > *{
 }
 
 .tag-item{
-background-color: #fff;
+background-color: #ECF0F1;
 float: left;
 width:45%;
 border: 1px solid #eee;
 margin: auto 5px 5px auto;
 padding: 2px 6px;
 border-radius: 6px;
-color: black;
+color: #2C3E50;
 font-weight: normal;
 font-size: 13px;
 text-align:center;
@@ -253,7 +269,7 @@ cursor: pointer;
 }
 
 .tag-item:hover, .tag-item.active{
-	color:#fff;
+	color:#ECF0F1;
 	background-image: linear-gradient(to top,#2a75c4,#3482d3);
 }
 
