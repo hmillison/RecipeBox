@@ -187,10 +187,22 @@ input[type="checkbox"]:checked + span:before {
 @media (min-width: 768px) and (max-width: 1200px){
 
 #recipe-buttons .btn{
-	padding: 5px 10px;
-	font-size: 13px;
+	padding: 3px 2px;
+	font-size: 12px;
 	line-height: 1.5;
 	margin-bottom:5px;
+}
+
+#recipes .thumbnail>img {
+		height:120px;
+}
+
+.hover{
+		height:100%;
+}
+
+.hover h4{
+	font-size:15px;
 }
 
 }
@@ -228,14 +240,15 @@ nav > *{
 .tag-item{
 background-color: #fff;
 float: left;
+width:45%;
 border: 1px solid #eee;
-margin: auto 3px auto auto;
+margin: auto 5px 5px auto;
 padding: 2px 6px;
 border-radius: 6px;
 color: black;
 font-weight: normal;
 font-size: 13px;
-margin-bottom: 3px;
+text-align:center;
 cursor: pointer;
 }
 
