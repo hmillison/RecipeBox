@@ -36,9 +36,9 @@ Bootstrap Overrides
 	margin-bottom: 5px;
 }
 
-.btn-primary{
-	background-image: linear-gradient(to top,#2a75c4,#3482d3);
-	background-color: none;
+.btn-primary:hover, .btn-primary:focus, .btn-primary:active, .btn-primary.active, .open>.dropdown-toggle.btn-primary{
+	background-color:#007fff !important;
+	border-color:#007fff !important;
 }
 
 #recipes .col-lg-3{
@@ -84,9 +84,7 @@ Form/Recipe Display
 }
 
 #loader{
-	margin: auto;
-	display: block;
-	text-align: center;
+	text-align:center;
 }
 
 .recipe-tab-container{
@@ -229,6 +227,7 @@ nav > *{
 	margin-right:5px;
 }
 
+<<<<<<< HEAD
 .tag:hover .delete-tag{
 	opacity:1;
 }
@@ -265,6 +264,8 @@ cursor: pointer;
 }
 
 
+=======
+>>>>>>> parent of 233cfa1... Filter by Tags buttons replacing View Tags dropdown
 /*===========================================================
 Grocery List Modal
 ===========================================================*/
