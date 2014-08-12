@@ -5,9 +5,14 @@
 HTML Tags
 ===========================================================*/
 body{
+<<<<<<< HEAD
 background-color: #ECF0F1;
 font-family: 'Lato', sans-serif;
 color:#2C3E50;
+=======
+background-color: #fff;
+font-family: 'Lato', sans-serif;
+>>>>>>> fdfe17dc6a0ecf2afe6fbfaf5f1f93a9776d55f7
 
 }
 
@@ -248,7 +253,6 @@ nav > *{
 	margin-right:5px;
 }
 
-<<<<<<< HEAD
 .tag:hover .delete-tag{
 	opacity:1;
 }
@@ -284,9 +288,6 @@ cursor: pointer;
 	cursor:pointer;
 }
 
-
-=======
->>>>>>> parent of 233cfa1... Filter by Tags buttons replacing View Tags dropdown
 /*===========================================================
 Grocery List Modal
 ===========================================================*/
