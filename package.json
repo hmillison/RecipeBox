@@ -9,7 +9,7 @@
     "cheerio": "^0.17.0",
     "connect-flash": "^0.1.1",
     "cookie-parser": "^1.0.1",
-    "ejs": "~0.8.5",
+    "ejs": "^0.8.8",
     "emailjs": "^0.3.10",
     "express": "latest",
     "express-session": "^1.7.5",
