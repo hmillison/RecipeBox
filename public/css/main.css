@@ -99,10 +99,13 @@ Form/Recipe Display
 	height:80px;
 }
 
-#loader{
-	margin: auto;
+#scrape-form{
 	display: block;
-	text-align: center;
+	margin: auto;
+}
+
+#loader{
+	text-align:center;
 }
 
 .recipe-tab-container{
@@ -245,6 +248,7 @@ nav > *{
 	margin-right:5px;
 }
 
+<<<<<<< HEAD
 .tag:hover .delete-tag{
 	opacity:1;
 }
@@ -281,6 +285,8 @@ cursor: pointer;
 }
 
 
+=======
+>>>>>>> parent of 233cfa1... Filter by Tags buttons replacing View Tags dropdown
 /*===========================================================
 Grocery List Modal
 ===========================================================*/

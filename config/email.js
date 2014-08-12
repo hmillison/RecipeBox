@@ -6,7 +6,7 @@ module.exports = function(app, email, moment) {
 //email server config
 var server  = email.server.connect({
    user:    "recipebox@hmillie.com",
-   password:"theflash",
+   password: "theflash",
    host:    "mail.hmillie.com",
    ssl:     false
 });
@@ -29,7 +29,7 @@ for(var i = 0;i<list.length;i++)
 
 	for(var k = 0;k<list[i].ingredients.length;k++)
 	{
-		if(shoppinglist[k] != "")
+		if(list[i].ingredients != "")
 		{
 			content += "<li>" + list[i].ingredients[k] + "</li>";
 		}
