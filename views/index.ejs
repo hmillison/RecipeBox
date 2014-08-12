@@ -442,49 +442,39 @@ $('#recipe-scrape').hide();
 
 		});
 
-		 $( "#view-form" ).submit(function (e) {
-        // Get the submit button element
-				    e.preventDefault();
-
-				var formvals = $(this).serializeArray();
-				var selectedtags = [];
-				for(var i = 0;i<formvals.length;i++){
-					selectedtags.push(formvals[i].value);
+				$('.tag-item').on('click',function(){
+				var tagid = $(this).attr('id');
+				if($(this).hasClass('active')){
+					$('.thumbnail').fadeIn();
+					$('.tag-item').removeClass('active');
 				}
-        var submitType = $(this).find("input[type=submit]:focus" ).attr('id');
-				if(submitType == "view-tags"){
-						$('.thumbnail').each(function(index){
-								var recipeid = $(this).attr('id');
-								$(this).fadeIn();
-								if(recipeintags(recipeid,selectedtags) == false){
-										$(this).fadeOut();
+				else
+				{
+					$('.tag-item').removeClass('active');
+					$(this).addClass('active');
+					$('.thumbnail').each(function(index){
+							var recipeid = $(this).attr('id');
+							$(this).fadeIn();
+							if(recipeintags(recipeid,tagid) == false){
+									$(this).fadeOut();
 								}
-
-
-					})
+							});
 				}
-				else if(submitType == "all-tags"){
-					$('#view-form input:checkbox').removeAttr('checked');
+		});
 
-						$('.thumbnail').fadeIn();
-				}
-    });
-
-		function recipeintags(id,list)
+		function recipeintags(id,tag)
 		{
 			if(user.data.recipes[id].tags != undefined)
 			{
-				var recipe = user.data.recipes[id].tags;
-				for(var i = 0;i<list.length;i++)
+				for(var i = 0;i<user.data.recipes[id].tags.length;i++)
+				{
+					var recipe = user.data.recipes[id].tags;
+					if(tag == recipe[i])
 					{
-						for(var j = 0;j<recipe.length;j++)
-						{
-							if(list[i] == recipe[j]){
-								return true;
-							}
-						}
+						return true;
 					}
-		}
+				}
+			}
 		return false;
 		}
 
