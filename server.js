@@ -14,6 +14,7 @@ var session      = require('express-session');
 var email   = require("emailjs");
 var scrape = require('./scrape');
 var moment = require('moment');
+
 app.use(bodyParser({limit:'50mb'}));
 
 // configuration ===========================================
@@ -497,6 +498,6 @@ function inGroceryList(recipe, list)
 }
 
 
-app.listen('8081');
-console.log('Magic happens on port 8081');
+app.listen('5000');
+console.log('Magic happens on port 5000');
 exports = module.exports = app;
