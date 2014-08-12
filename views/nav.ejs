@@ -15,7 +15,38 @@
 				Manage Grocery List
 		</button>
 	<% } %>
+	<div class="btn-group">
 
+	<button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" id="tagbutton-<%= i %>">
+		View <span class="caret"></span>
+	</button>
+	<ul class="dropdown-menu dropdown-menu-form" role="menu" id="viewmenu">
+				<form method="post" id="view-form">
+
+					<% for(var k=0;k<user.data.tags.length;k++) {%>
+				<li class="tag">
+					<label>
+							<input type="checkbox" name="tag-<%= k %>" id="tag-<%= k %>" value="<%= user.data.tags[k] %>" >
+					<span></span>
+					<%= user.data.tags[k] %>
+				</label>
+				<span class="delete-tag"  id="<%= k %>">
+					<i class="fa fa-times"></i>
+				</span>
+			</li>
+			<% } %>
+					<li class="divider"></li>
+					<li>
+						<div id="text-center">
+							<input type="submit" class="btn btn-primary btn-sm" id="view-tags" value="Show Tagged Recipes">
+						</div>
+						<div id="text-center">
+							<input type="submit" class="btn btn-primary btn-sm" id="all-tags" value="Show All Recipes">
+						</div>
+					</li>
+							</form>
+			</ul>
+</div>
 	<!-- <a href="javascript:<html><body onload='$('#scrape').submit()'><form method='post' action='http://localhost:8081/scrape' id='scrape'><input type='hidden' name='url' id='url' value='document.URL'></form></body></html>;" class="btn btn-default" id="bookmarklet">Drag me to your bookmarks to grab recipes as you browse</a> -->
 <% }%>
 <button type="button"

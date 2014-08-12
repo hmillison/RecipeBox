@@ -1,7 +1,6 @@
 // app/routes.js
 module.exports = function(app, passport) {
 
-
 	// =====================================
 	// LOGIN ===============================
 	// =====================================
@@ -9,7 +8,7 @@ module.exports = function(app, passport) {
 	app.get('/login', function(req, res) {
 
 		// render the page and pass in any flash data if it exists
-		res.render('login.ejs', { message: req.flash('loginMessage') }); 
+		res.render('login.ejs', { message: req.flash('loginMessage') });
 	});
 
 	// process the login form
@@ -38,7 +37,7 @@ module.exports = function(app, passport) {
 			user : req.user // get the user out of session and pass to template
 		});
 	});
-	
+
 	// process the login form
 	app.post('/login', passport.authenticate('local-login', {
 		successRedirect : '/', // redirect to the secure profile section
@@ -54,14 +53,14 @@ module.exports = function(app, passport) {
 		req.logout();
 		res.redirect('/');
 	});
-	
+
 	// process the signup form
 	app.post('/signup', passport.authenticate('local-signup', {
 		successRedirect : '/', // redirect to the secure profile section
 		failureRedirect : '/signup', // redirect back to the signup page if there is an error
 		failureFlash : true // allow flash messages
 	}));
-	
+
 
 	// =====================================
 	// GOOGLE ROUTES =======================
@@ -77,7 +76,7 @@ module.exports = function(app, passport) {
                     successRedirect : '/',
                     failureRedirect : '/'
             }));
-            
+
 // =============================================================================
 // AUTHORIZE (ALREADY LOGGED IN / CONNECTING OTHER SOCIAL ACCOUNT) =============
 // =============================================================================
@@ -91,7 +90,7 @@ module.exports = function(app, passport) {
 			failureRedirect : '/connect/local', // redirect back to the signup page if there is an error
 			failureFlash : true // allow flash messages
 		}));
-		
+
 	// google ---------------------------------
 
 		// send to google to do the authentication
@@ -110,7 +109,7 @@ module.exports = function(app, passport) {
 // route middleware to make sure a user is logged in
 function isLoggedIn(req, res, next) {
 
-	// if user is authenticated in the session, carry on 
+	// if user is authenticated in the session, carry on
 	if (req.isAuthenticated())
 		return next();
 

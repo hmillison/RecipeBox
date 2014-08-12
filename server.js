@@ -14,7 +14,7 @@ var session      = require('express-session');
 var email   = require("emailjs");
 var scrape = require('./scrape');
 var moment = require('moment');
-var request = require('request');
+
 app.use(bodyParser({limit:'50mb'}));
 
 // configuration ===========================================
@@ -167,7 +167,7 @@ else {
 // =====================================
 app.post('/search', function(req, res){
 	var searchkey = encodeURIComponent(req.body.keyword);
-	var url =  "http://api.yummly.com/v1/api/recipes?_app_id=---&_app_key=---&q="
+	var url =  "http://api.yummly.com/v1/api/recipes?_app_id=key&_app_key=key&q="
 							+ searchkey + "&requirePictures=true&maxResult=12";
 	/*var url = "http://api.bigoven.com/recipes?pg=1&rpp=25&title_kw="
 						+ searchkey
@@ -192,7 +192,7 @@ app.post('/searchadd', function(req,res){
 	var addedrecipes = req.body.recipes;
 	for(var i = 0;i<addedrecipes.length;i++){
 		var url = "http://api.yummly.com/v1/api/recipe/" + addedrecipes[i]
-					  + "?_app_id=---&_app_key=--";
+					  + "?_app_id=key&_app_key=key";
 	request({
 		uri: url,
 		method: "GET",
@@ -498,6 +498,6 @@ function inGroceryList(recipe, list)
 }
 
 
-app.listen('8081');
-console.log('Magic happens on port 8081');
+app.listen(process.env.PORT || '5000');
+console.log('Magic happens on port 5000');
 exports = module.exports = app;
