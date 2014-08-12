@@ -83,6 +83,11 @@ Form/Recipe Display
 	height:80px;
 }
 
+#scrape-form{
+	display: block;
+	margin: auto;
+}
+
 #loader{
 	text-align:center;
 }
