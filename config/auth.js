@@ -3,8 +3,8 @@
 // expose our config directly to our application using module.exports
 module.exports = {
 	'googleAuth' : {
-		'clientID' 		: '569455270100-r4897qqipsnut2ein6leq3c1qnb6bqi5.apps.googleusercontent.com',
-		'clientSecret' 	: 'DN2WPeQrTKQsFjzXG1HPiOBF',
+		'clientID' 		: 'clientID',
+		'clientSecret' 	: 'clientSecret',
 		'callbackURL' 	: 'http://my-recipe-box.herokuapp.com/oauth2callback'
 	}
 

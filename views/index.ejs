@@ -41,7 +41,7 @@
 		<% } } } %>
 	</div>
 		<div id="scrape-form">
-			<div class="col-sm-8  text-center">
+			<div class="col-sm-8 col-sm-offset-2 text-center">
 				<div id="msg"> </div>
 				<div class="recipe-tab-container">
 						<div class="tab active" id=recipe-search-tab>
@@ -69,7 +69,6 @@
 
 			</div>
 		</div>
-</div>
 <div class="container" id="recipes">
 
 		<% include recipe.ejs %>
@@ -258,7 +257,7 @@ $('#recipe-scrape').hide();
 
 
 			$("#recipe-image").fileinput(
-									{'showUpload':false,
+									{//'showUpload':false,
 									'captionTemplate':'<div class="form-control file-caption {class}"><span class="file-caption-name"></span></div>',
 									'initialCaption':'TESTING123',
 									'initialPreview':false,
@@ -445,39 +444,49 @@ $('#recipe-scrape').hide();
 
 		});
 
-		$('.tag-item').on('click',function(){
-				var tagid = $(this).attr('id');
-				if($(this).hasClass('active')){
-					$('.thumbnail').fadeIn();
-					$('.tag-item').removeClass('active');
-				}
-				else
-				{
-					$('.tag-item').removeClass('active');
-					$(this).addClass('active');
-					$('.thumbnail').each(function(index){
-							var recipeid = $(this).attr('id');
-							$(this).fadeIn();
-							if(recipeintags(recipeid,tagid) == false){
-									$(this).fadeOut();
-								}
-							});
-				}
-		});
+		 $( "#view-form" ).submit(function (e) {
+        // Get the submit button element
+				    e.preventDefault();
 
-		function recipeintags(id,tag)
+				var formvals = $(this).serializeArray();
+				var selectedtags = [];
+				for(var i = 0;i<formvals.length;i++){
+					selectedtags.push(formvals[i].value);
+				}
+        var submitType = $(this).find("input[type=submit]:focus" ).attr('id');
+				if(submitType == "view-tags"){
+						$('.thumbnail').each(function(index){
+								var recipeid = $(this).attr('id');
+								$(this).fadeIn();
+								if(recipeintags(recipeid,selectedtags) == false){
+										$(this).fadeOut();
+								}
+
+
+					})
+				}
+				else if(submitType == "all-tags"){
+					$('#view-form input:checkbox').removeAttr('checked');
+
+						$('.thumbnail').fadeIn();
+				}
+    });
+
+		function recipeintags(id,list)
 		{
 			if(user.data.recipes[id].tags != undefined)
 			{
-				for(var i = 0;i<user.data.recipes[id].tags.length;i++)
-				{
-					var recipe = user.data.recipes[id].tags;
-					if(tag == recipe[i])
+				var recipe = user.data.recipes[id].tags;
+				for(var i = 0;i<list.length;i++)
 					{
-						return true;
+						for(var j = 0;j<recipe.length;j++)
+						{
+							if(list[i] == recipe[j]){
+								return true;
+							}
+						}
 					}
-				}
-			}
+		}
 		return false;
 		}
 

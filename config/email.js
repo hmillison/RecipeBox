@@ -6,7 +6,7 @@ module.exports = function(app, email, moment) {
 //email server config
 var server  = email.server.connect({
    user:    "recipebox@hmillie.com",
-   password:"theflash",
+   password: "password",
    host:    "mail.hmillie.com",
    ssl:     false
 });
