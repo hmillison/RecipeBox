@@ -29,15 +29,16 @@
 		<div class="text-center">
 			<div id="headline">Recipe Box </div>
 		</div>
-<div class="Container">
+<div class="container">
 	<div class="col-md-2" id="tag-container">
-		<% if(user.data.tags.length > 0){%>
+		<% if(user != "empty") { %>
+		<% if(user.data.tags != undefined){%>
 		<h4>Filter by Tags</h4>
 		<% for(var k=0;k<user.data.tags.length;k++) {%>
 				<div class="tag-item" id="<%= user.data.tags[k] %>" >
 						<%= user.data.tags[k] %>
 				</div>
-		<% } } %>
+		<% } } } %>
 	</div>
 		<div id="scrape-form">
 			<div class="col-sm-8  text-center">

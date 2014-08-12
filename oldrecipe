@@ -1,0 +1,34 @@
+<h4><%= user.data.recipes[i].name %></h4>
+  <div class="pagination-centered">
+    <div id="recipe-buttons">
+      <button class="btn btn-primary" id="listadd<%= i %>"role="button">Add to List</button>
+       <div class="btn-group">
+<button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" id="tagbutton-<%= i %>">
+  Tags <span class="caret"></span>
+</button>
+  <ul class="dropdown-menu dropdown-menu-form" role="menu" id="tagmenu-<%= i %>">
+        <form action="/updatetags?item=<%=i %>" method="post" id="updatetags">
+          <% for(var k=0;k<user.data.tags.length;k++) {%>
+        <li>
+          <label>
+              <input type="checkbox" name="tag-<%= k %>" id="tag-<%= k %>" value="<%= user.data.tags[k] %>" >
+          <span></span>
+          <%= user.data.tags[k] %>
+        </label>
+      </li>
+      <% }%>
+
+      <li class="divider"></li>
+        <li><input type="text" placeholder="Enter New Tag" class="form-control" name="newtag" id="newtag"></li>
+        <li class="divider"></li>
+        <li>
+          <div id="update-tag">
+            <input type="submit" class="btn btn-primary btn-sm" value="Update Tags">
+          </div>
+        </li>
+            </form>
+    </ul>
+  </div>
+       <button class="btn btn-default" id="delete<%= i %>" role="button">Delete</button>
+     </div>
+   </div>

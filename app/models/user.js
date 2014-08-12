@@ -18,9 +18,12 @@ var userSchema = mongoose.Schema({
     	email		: String,
     	name		: String
     },
-    recipes : [],
-    list : []
-
+    data 			: {
+    	recipes		: [],
+    	list	    : [],
+    	tags		: []
+    }
+    
 });
 
 // methods ======================
