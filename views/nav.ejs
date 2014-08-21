@@ -3,11 +3,6 @@
 	<a href="/auth/google" class="btn btn-danger">Login with Google</a>
 <% } else {%>
 	 <a href="/logout" class="btn btn-default">Logout</a>
-	 <!-- <% if(!user.local.email){ %>
-	 		<a href="/connect/local" class="btn btn-default">Connect Local</a>
-	 <% } else if(!user.google.token){ %>
-			<a href="/connect/google" class="btn btn-danger">Connect Google</a>
-	 <% } %> -->
 
 	<button class="btn btn-default" data-toggle="modal" data-target=".addrecipedialog">Add Recipe</button>
 	 <% if(user.data.list.length > 0) {%>
@@ -15,7 +10,6 @@
 				Manage Grocery List
 		</button>
 	<% } %>
-</div>
 <button type="button"
 		class="btn btn-default btn-default popover-help"
 		style="float:right;margin-right:5px;"
@@ -24,3 +18,4 @@
 		data-html="true">
 		About
 </button>
+<% } %>
