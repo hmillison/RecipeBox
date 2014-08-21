@@ -299,6 +299,10 @@ Manually Add Recipe Modal
 	margin-bottom:5px;
 }
 
+#addrecipe .modal-footer .btn+.btn{
+	margin-bottom:5px !important;
+}
+
 .recipe-image-caption{
 	overflow:hidden;
 	white-space:nowrap;
@@ -316,6 +320,11 @@ Manually Add Recipe Modal
 }
 .recipe-image-input{
 	max-width:558px;
+}
+
+#add-recipe-error{
+	display:inline-block;
+	margin-bottom: 0;
 }
 
 /*===========================================================

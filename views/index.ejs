@@ -38,10 +38,8 @@
 					<div class="tag-item" id="<%= user.data.tags[k] %>" >
 							<%= user.data.tags[k] %>
 						</div>
-
 		<% } } } %>
 	</div>
-		<div class="container">
 			<div class="col-sm-8 col-sm-offset-2 text-center" id="scrape-form">
 				<div id="msg"> </div>
 				<div class="recipe-tab-container">
@@ -69,13 +67,11 @@
 				</form>
 
 			</div>
-		</div>
 <div class="container" id="recipes">
 
 		<% include recipe.ejs %>
 </div>
 <div>
-	<img src="images/loader.gif" id="loader">
 </div>
 
 
@@ -89,7 +85,7 @@
       </div>
       <div class="modal-body">
 		<form id="addrecipe" method="post" enctype="multipart/form-data">
-			<input type="text" class="form-control text-center" placeholder="Enter name of a recipe" name="name" id="recipe-name" >
+			<input type="text" class="form-control text-center" placeholder="Enter name of a recipe" name="name" id="recipe-name">
 			<input id="recipe-image" type="file" class="file">
 			<div class="input-group">
 				<input type="text" class="form-control text-center" placeholder="Enter an ingredient" id="ingredient-input">
@@ -108,6 +104,7 @@
 
       </div>
       <div class="modal-footer">
+				<div class="alert alert-danger" id="add-recipe-error"></div>
       	<input type="submit" class="btn btn-primary btn-default" id="add-recipe-form" value="Add A Recipe">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
       </div>
@@ -137,7 +134,7 @@
   </div>
 </div>
 
-<!-- Recipe Details Modal -->
+<!-- Recipe Search Results Modal -->
 <div class="modal fade recipesearch" id="recipesearch" tabindex="-1" role="dialog" aria-labelledby="recipesearch" aria-hidden="true">
 	<div class="modal-dialog">
 		<div class="modal-content">
@@ -189,6 +186,7 @@
 var user= <%- JSON.stringify(user) %>;
 $('#recipes').hide();
 $('#recipe-scrape').hide();
+$('#add-recipe-error').hide();
 
  		$(window).load(function() {
   					$('#loader').hide();
@@ -258,7 +256,8 @@ $('#recipe-scrape').hide();
 
 
 			$("#recipe-image").fileinput(
-									{//'showUpload':false,
+									{
+									'showUpload':false,
 									'captionTemplate':'<div class="form-control file-caption {class}"><span class="file-caption-name"></span></div>',
 									'initialCaption':'TESTING123',
 									'initialPreview':false,
@@ -297,7 +296,10 @@ $('#recipe-scrape').hide();
       	success: function(result) {
 					var output = result.data.link;
 					callback(output);
-      		}
+				},
+				error: function(){
+					setTimeout($("#add-recipe-error").text("Error Adding Recipe Image"),500);
+				}
     		});
 			}
 
@@ -326,13 +328,20 @@ $('#recipe-scrape').hide();
 
 			$("#add-recipe-form").click(function(e){
 				e.preventDefault();
-				sendtoImgur(recipeimage.replace('data:image/jpeg;base64,',''), sendRecipe);
-
-
+				if(recipeimage.length > 0){
+					var concat = recipeimage.indexOf('base64,') + 7;
+					recipeimage = recipeimage.substring(concat,recipeimage.length);
+					sendtoImgur(recipeimage, sendRecipe);
+				}
+				else{
+					recipeimage = "/images/placeholder.png";
+					sendRecipe(recipeimage);
+				}
 			});
 
 			function sendRecipe(output) {
 				ne = output;
+				if($("#recipe-name").val().length > 0){
 				var newrecipe = { name : "", image: "", ingredients : "", directions : "", tags: []};
 				newrecipe.name = $("#recipe-name").val();
 				newrecipe.image = output;
@@ -345,7 +354,10 @@ $('#recipe-scrape').hide();
 					}).done(function() {
 							setTimeout(location.href = "/",1000);
 					});
-
+				}
+				else{
+					setTimeout($("#add-recipe-error").text("Please Enter a Name for Your Recipe"),500);
+				}
 			}
 
 			//Updates running list of directions/ingredients for Add Recipe form
@@ -445,55 +457,48 @@ $('#recipe-scrape').hide();
 
 		});
 
-		 $( "#view-form" ).submit(function (e) {
-        // Get the submit button element
-				    e.preventDefault();
 
-				var formvals = $(this).serializeArray();
-				var selectedtags = [];
-				for(var i = 0;i<formvals.length;i++){
-					selectedtags.push(formvals[i].value);
+			$('.tag-item').on('click',function(){
+				var tagid = $(this).attr('id');
+				if($(this).hasClass('active')){
+					$('.thumbnail').fadeIn();
+					$('.tag-item').removeClass('active');
 				}
-        var submitType = $(this).find("input[type=submit]:focus" ).attr('id');
-				if(submitType == "view-tags"){
-						$('.thumbnail').each(function(index){
-								var recipeid = $(this).attr('id');
-								$(this).fadeIn();
-								if(recipeintags(recipeid,selectedtags) == false){
-										$(this).fadeOut();
+				else
+				{
+					$('.tag-item').removeClass('active');
+					$(this).addClass('active');
+					$('.thumbnail').each(function(index){
+							var recipeid = $(this).attr('id');
+							$(this).fadeIn();
+							if(recipeintags(recipeid,tagid) == false){
+									$(this).fadeOut();
 								}
-
-
-					})
+							});
 				}
-				else if(submitType == "all-tags"){
-					$('#view-form input:checkbox').removeAttr('checked');
+		});
 
-						$('.thumbnail').fadeIn();
-				}
-    });
-
-		function recipeintags(id,list)
+		function recipeintags(id,tag)
 		{
 			if(user.data.recipes[id].tags != undefined)
 			{
-				var recipe = user.data.recipes[id].tags;
-				for(var i = 0;i<list.length;i++)
+				for(var i = 0;i<user.data.recipes[id].tags.length;i++)
+				{
+					var recipe = user.data.recipes[id].tags;
+					if(tag == recipe[i])
 					{
-						for(var j = 0;j<recipe.length;j++)
-						{
-							if(list[i] == recipe[j]){
-								return true;
-							}
-						}
+						return true;
 					}
-		}
+				}
+			}
 		return false;
 		}
 
 		$(".popover-help").popover({
-			  trigger: 'focus'
+			  trigger: 'focus',
+				content : "<p> Recipe Box is a web app created by Henry Millison for the purpose of saving and managing your favorite recipes. </p><p> How do you use it? <br/><br /> Search for recipes or enter a URL of a recipe you found online using the form below <br /><br /> Use the Add Recipe button to the left to manually add a recipe <br/><br /> Once you have recipes in your collection, add them to your grocery list or create tags to organize them"
 		});
+
 
 		$(".tab").click(function(){
 			$(".tab").removeClass("active");
