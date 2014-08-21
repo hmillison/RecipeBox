@@ -185,22 +185,22 @@ ul.dropdown-menu-form {
 }
 
 input[type="checkbox"] {
-  display:none;
+	display:none;
 }
 
 
 input[type="checkbox"] + span:before {
-  font-family: 'FontAwesome';
-  padding-right: 3px;
-  font-size: 20px;
+	font-family: 'FontAwesome';
+	padding-right: 3px;
+	font-size: 20px;
 }
 
 input[type="checkbox"] + span:before {
-  content: "\f096"; /* check-empty */
+	content: "\f096"; /* check-empty */
 }
 
 input[type="checkbox"]:checked + span:before {
-  content: "\f046"; /* check */
+	content: "\f046"; /* check */
 }
 
 @media (min-width: 768px) and (max-width: 1200px){

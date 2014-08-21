@@ -167,7 +167,7 @@ else {
 // =====================================
 app.post('/search', function(req, res){
 	var searchkey = encodeURIComponent(req.body.keyword);
-	var url =  "http://api.yummly.com/v1/api/recipes?_app_id=key&_app_key=key&q="
+	var url =  "http://api.yummly.com/v1/api/recipes?_app_id=291777f0&_app_key=c71a65634b748e047b9fd3ac0d7d6337&q="
 							+ searchkey + "&requirePictures=true&maxResult=12";
 	/*var url = "http://api.bigoven.com/recipes?pg=1&rpp=25&title_kw="
 						+ searchkey
@@ -192,7 +192,7 @@ app.post('/searchadd', function(req,res){
 	var addedrecipes = req.body.recipes;
 	for(var i = 0;i<addedrecipes.length;i++){
 		var url = "http://api.yummly.com/v1/api/recipe/" + addedrecipes[i]
-					  + "?_app_id=key&_app_key=key";
+					  + "?_app_id=291777f0&_app_key=c71a65634b748e047b9fd3ac0d7d6337";
 	request({
 		uri: url,
 		method: "GET",
