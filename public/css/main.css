@@ -104,6 +104,12 @@ Form/Recipe Display
 	margin: auto;
 }
 
+@media (min-width: 768px) and (max-width: 992px){
+	#scrape-form{
+		margin-left: 16.66666667%;
+	}
+}
+
 #loader{
 	text-align:center;
 }
@@ -203,6 +209,7 @@ input[type="checkbox"]:checked + span:before {
 	content: "\f046"; /* check */
 }
 
+
 @media (min-width: 768px) and (max-width: 1200px){
 
 #recipe-buttons .btn{
@@ -282,6 +289,7 @@ cursor: pointer;
 	margin-top: 5px;
 	cursor:pointer;
 }
+
 
 /*===========================================================
 Grocery List Modal
